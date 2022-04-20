@@ -163,23 +163,13 @@ class Twilio_Bulk {
 
 		$plugin_public = new Twilio_Bulk_Public( $this->get_plugin_name(), $this->get_version() );
 
-		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
-		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
-		$this->loader->add_action( 'init', $plugin_public, 'display_upload_form' );
+		if ( isset($_GET['twilio-bulk']) ) {
+			$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
+			$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
+			$this->loader->add_action( 'init', $plugin_public, 'display_upload_form' );
+		}
 		
 	}
-
-	/**
-	 * Create public endpoints
-	 *
-	 * @since     0.1.0
-	 */
-	// private function create_public_endpoints() {
-		
-	// 	$plugin_public = new Twilio_Bulk_Endpoints( $this->get_plugin_name(), $this->get_version() );
-	// 	$this->loader->add_action( 'rest_api_init', $plugin_public, 'twilio_bulk_register_endpoints' );
-
-	// }
 
 	/**
 	 * Run the loader to execute all of the hooks with WordPress.

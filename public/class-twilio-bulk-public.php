@@ -73,7 +73,7 @@ class Twilio_Bulk_Public {
 		 * class.
 		 */
 
-		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/bootstrap.css', array(), $this->version, 'all' );
+		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/bootstrap.css', array(), null, 'all' );
 
 	}
 
@@ -95,9 +95,11 @@ class Twilio_Bulk_Public {
 		 * between the defined hooks and the functions defined in this
 		 * class.
 		 */
-
-		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/twilio-bulk-public.js', array( 'jquery' ), $this->version, false );
-		// wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/jquery-3.6.0.min.js', array( 'jquery' ), $this->version, false );
+		
+		
+		wp_enqueue_script( 'bootstrap', plugin_dir_url( __FILE__ ) . 'js/bootstrap.bundle.min.js', array(), false, false );
+		// wp_enqueue_script( 'popper', plugin_dir_url( __FILE__ ) . '../vendor/node_modules/@popperjs/core/dist/cjs/popper.js', array(), false, false );
+		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/twilio-bulk-public.js', array(), $this->version, false );
 
 	}
 
@@ -106,7 +108,7 @@ class Twilio_Bulk_Public {
 			return;
 		}
 		$content = require_once( plugin_dir_path( __FILE__ ) . 'partials/twilio-bulk-public-display.php' );
-		return $content;
+		//return $content;
 	}
 
 }
