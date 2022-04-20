@@ -65,6 +65,7 @@ class Twilio_Bulk {
 		$this->set_locale();
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
+		// $this->create_public_endpoints();
 
 	}
 
@@ -108,6 +109,11 @@ class Twilio_Bulk {
 		 * side of the site.
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-twilio-bulk-public.php';
+
+		/**
+		 * The class responsible for defining public facing endpoints
+		 */
+		// require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-twilio-bulk-endpoints.php';
 
 		$this->loader = new Twilio_Bulk_Loader();
 
@@ -159,8 +165,21 @@ class Twilio_Bulk {
 
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
-
+		$this->loader->add_action( 'init', $plugin_public, 'display_upload_form' );
+		
 	}
+
+	/**
+	 * Create public endpoints
+	 *
+	 * @since     0.1.0
+	 */
+	// private function create_public_endpoints() {
+		
+	// 	$plugin_public = new Twilio_Bulk_Endpoints( $this->get_plugin_name(), $this->get_version() );
+	// 	$this->loader->add_action( 'rest_api_init', $plugin_public, 'twilio_bulk_register_endpoints' );
+
+	// }
 
 	/**
 	 * Run the loader to execute all of the hooks with WordPress.
@@ -201,5 +220,4 @@ class Twilio_Bulk {
 	public function get_version() {
 		return $this->version;
 	}
-
 }

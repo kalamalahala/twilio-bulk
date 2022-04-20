@@ -73,7 +73,7 @@ class Twilio_Bulk_Public {
 		 * class.
 		 */
 
-		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/twilio-bulk-public.css', array(), $this->version, 'all' );
+		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/bootstrap.css', array(), $this->version, 'all' );
 
 	}
 
@@ -97,7 +97,16 @@ class Twilio_Bulk_Public {
 		 */
 
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/twilio-bulk-public.js', array( 'jquery' ), $this->version, false );
+		// wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/jquery-3.6.0.min.js', array( 'jquery' ), $this->version, false );
 
+	}
+
+	function display_upload_form() {
+		if (!isset($_GET['twilio-bulk']) || $_GET['twilio-bulk'] != 'upload') {
+			return;
+		}
+		$content = require_once( plugin_dir_path( __FILE__ ) . 'partials/twilio-bulk-public-display.php' );
+		return $content;
 	}
 
 }
