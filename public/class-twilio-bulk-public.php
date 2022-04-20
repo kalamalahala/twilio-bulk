@@ -72,8 +72,10 @@ class Twilio_Bulk_Public {
 		 * between the defined hooks and the functions defined in this
 		 * class.
 		 */
-
-		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/bootstrap.css', array(), null, 'all' );
+		
+		wp_enqueue_style( 'bootstrap-css', plugin_dir_url( __FILE__ ) . 'css/bootstrap.css', array(), null, 'all' );
+		wp_enqueue_style( 'font-awesome-css', plugin_dir_url( __FILE__ ) . 'css/font-awesome.css', array(), null, 'all' );
+		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/twilio-bulk-public.css', array(), false, false );
 
 	}
 
@@ -97,9 +99,9 @@ class Twilio_Bulk_Public {
 		 */
 		
 		
-		wp_enqueue_script( 'bootstrap', plugin_dir_url( __FILE__ ) . 'js/bootstrap.bundle.min.js', array(), false, false );
-		// wp_enqueue_script( 'popper', plugin_dir_url( __FILE__ ) . '../vendor/node_modules/@popperjs/core/dist/cjs/popper.js', array(), false, false );
-		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/twilio-bulk-public.js', array(), $this->version, false );
+		wp_enqueue_script( 'bootstrap-js', plugin_dir_url( __FILE__ ) . 'js/bootstrap.bundle.min.js', array(), false, false ); // Bootstrap JS
+		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/twilio-bulk-public.js', array(), false, false ); // Twilio Bulk JS
+
 
 	}
 
@@ -107,8 +109,8 @@ class Twilio_Bulk_Public {
 		if (!isset($_GET['twilio-bulk']) || $_GET['twilio-bulk'] != 'upload') {
 			return;
 		}
-		$content = require_once( plugin_dir_path( __FILE__ ) . 'partials/twilio-bulk-public-display.php' );
-		//return $content;
+		$content = include( plugin_dir_path( __FILE__ ) . 'partials/twilio-bulk-public-display.php' );
+		return $content;
 	}
 
 }

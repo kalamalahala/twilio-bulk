@@ -1,5 +1,6 @@
 {
   "dependencies": {
-    "@popperjs/core": "^2.11.5"
+    "@popperjs/core": "^2.11.5",
+    "fontawesome": "^5.6.3"
   }
 }

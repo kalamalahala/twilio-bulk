@@ -37,4 +37,13 @@
 		modal.find('.modal-title').text('New message to OH FUCK YEAH ' + recipient);
 		modal.find('.modal-body input').val(recipient);
 	})
+
+	$('#logout-button').click(function() {
+		// Change anchor text
+
+		$('#logout-button').text('Logging Out...');
+			
+		});
+
+
 })( jQuery );
