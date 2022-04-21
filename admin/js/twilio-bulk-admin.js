@@ -29,4 +29,10 @@
 	 * practising this, we should strive to set a better example in our own work.
 	 */
 
+	// Replace "#twilio-header" with "Hello Hello" on click
+	$('#twilio-header').click(function() {
+		$('#twilio-header').text('Hello Hello');
+	}
+	)
+	
 })( jQuery );

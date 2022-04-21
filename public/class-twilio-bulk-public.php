@@ -105,40 +105,17 @@ class Twilio_Bulk_Public {
 
 	}
 
-	function display_content() {
-		if (!isset($_GET['twilio-bulk'])) {
-			return;
-		}
+	public static function include_template_file( $template ) {
+
 		$endpoint = $_GET['twilio-bulk'];
-		$content = '';
 		switch ($endpoint) {
-			case 'upload':
-				$content = $this->upload_form();
-				break;
-			case 'success':
-				$content = $this->success_form();
-				break;
-			case 'error':
-				$content = $this->error_form();
-				break;
 			default:
-				$content = $this->upload_form();
+				$content = __ROOT__ . '/twilio-bulk/public/partials/twilio-bulk-home.php';
 				break;
 		}
 		return $content;
 	}
 
-	function upload_form() {
-		echo 'yeet';
-		include plugin_dir_path( __FILE__ ) . 'partials/class-twilio-bulk-upload-form.php';
-	}
 
-	function success_form() {
-		include plugin_dir_path( __FILE__ ) . 'partials/class-twilio-bulk-success-form.php';
-	}
-
-	function error_form() {
-		include plugin_dir_path( __FILE__ ) . 'partials/class-twilio-bulk-error-form.php';
-	}
 
 }

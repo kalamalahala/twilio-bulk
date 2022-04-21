@@ -65,7 +65,6 @@ class Twilio_Bulk {
 		$this->set_locale();
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
-		// $this->create_public_endpoints();
 
 	}
 
@@ -110,11 +109,6 @@ class Twilio_Bulk {
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-twilio-bulk-public.php';
 
-		/**
-		 * The class responsible for defining public facing endpoints
-		 */
-		// require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-twilio-bulk-endpoints.php';
-
 		$this->loader = new Twilio_Bulk_Loader();
 
 	}
@@ -150,6 +144,9 @@ class Twilio_Bulk {
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
 
+		// Add admin menu
+		$this->loader->add_action( 'admin_menu', $plugin_admin, 'twilio_bulk_admin_menu' );
+
 	}
 
 	/**
@@ -163,14 +160,27 @@ class Twilio_Bulk {
 
 		$plugin_public = new Twilio_Bulk_Public( $this->get_plugin_name(), $this->get_version() );
 
-		if ( isset($_GET['twilio-bulk']) ) {
+		// Check path
+		// global $wp;
+		// $current_path = $wp->request;
+		// $pathh = $wp->query_vars;
+		// // $current_path = explode('/', $current_path);
+		// var_dump ( $current_path );
+		// echo '<br>';
+		// var_dump( $pathh );
+		// echo add_query_arg( $wp->query_vars, home_url( $wp->request ) );
+		// die;
+
+		// echo __ROOT__;
+
+		if ( isset($_GET['twilio-bulk']) ) { // Add CSS and JS when twilio-bulk is a parameter in the URL
 			$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 			$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
-			$this->loader->add_action( 'wp_body_open', $plugin_public, 'display_content' );
+			$this->loader->add_filter( 'page_template', $plugin_public, 'include_template_file' );
 		}
 		
 	}
-
+	
 	/**
 	 * Run the loader to execute all of the hooks with WordPress.
 	 *

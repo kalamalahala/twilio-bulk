@@ -36,6 +36,7 @@ if ( ! defined( 'WPINC' ) ) {
  * Rename this for your plugin and update it as you release new versions.
  */
 define( 'TWILIO_BULK_VERSION', '0.1.0' );
+define( '__ROOT__', dirname( dirname( __FILE__ ) ) );
 
 /**
  * The code that runs during plugin activation.

@@ -73,6 +73,9 @@ class Twilio_Bulk_Admin {
 		 * class.
 		 */
 
+		 // Bootstrap on Admin Panel by Rush Frisby: https://rushfrisby.com/using-bootstrap-in-wordpress-admin-panel
+		wp_enqueue_style( 'bootstrap-min-css', plugin_dir_url( __FILE__ ) . 'css/bootstrap-admin-wrapper.css', array(), false, 'all' );
+
 		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/twilio-bulk-admin.css', array(), $this->version, 'all' );
 
 	}
@@ -96,8 +99,50 @@ class Twilio_Bulk_Admin {
 		 * class.
 		 */
 
-		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/twilio-bulk-admin.js', array( 'jquery' ), $this->version, false );
+		// Hacky JS include for Admin Bootstrap by Rush Frisby: https://rushfrisby.com/using-bootstrap-in-wordpress-admin-panel
+		// wp_enqueue_script('admin_js_bootstrap_hack', plugin_dir_url( __FILE__ ) . 'js/bootstrap-hack.js', false, '0.1.0', false);	
+
+		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/twilio-bulk-admin.js', array( 'jquery' ), false, false );
 
 	}
+	
+	// Callback function for Loader class to create Main menu on Admin Dashboard
+	public function twilio_bulk_admin_menu() {
+		
+		// Dashboard Menu
+		add_menu_page( 'Twilio Bulk Text', 'Bulk Messaging', 'manage_options', 'twilio-bulk-dashboard', array( $this, 'twilio_bulk_admin_page' ), 'dashicons-format-chat', 26 );
+		
+		// Campaigns Menu
+		add_submenu_page( 'twilio-bulk-dashboard', 'Campaigns', 'Campaigns', 'manage_options', 'twilio-bulk-campaigns', array( $this, 'twilio_bulk_campaigns_page' ) );
+
+		// Contacts Menu
+		add_submenu_page( 'twilio-bulk-dashboard', 'Contacts', 'Contacts', 'manage_options', 'twilio-bulk-contacts', array( $this, 'twilio_bulk_contacts_page' ) );
+
+		// Reports Menu
+		add_submenu_page( 'twilio-bulk-dashboard', 'Reports', 'Reports', 'manage_options', 'twilio-bulk-reports', array( $this, 'twilio_bulk_reports_page' ) );
+
+	}
+
+	// Callback function for twilio_bulk_admin_menu to grab php files and display on Admin Dashboard
+	public function twilio_bulk_admin_page() {
+		include_once( plugin_dir_path( __FILE__ ) . 'partials/twilio-bulk-admin-display.php' );
+	}
+
+	public function twilio_bulk_campaigns_page() {
+		// include_once( plugin_dir_path( __FILE__ ) . 'partials/twilio-bulk-admin-campaigns.php' );
+		echo '<h1>Campaigns</h1>';
+	}
+
+	public function twilio_bulk_contacts_page() {
+		// include_once( plugin_dir_path( __FILE__ ) . 'partials/twilio-bulk-admin-contacts.php' );
+		echo '<h1>Contacts</h1>';
+	}
+
+	public function twilio_bulk_reports_page() {
+		// include_once( plugin_dir_path( __FILE__ ) . 'partials/twilio-bulk-admin-reports.php' );
+		echo '<h1>Reports</h1>';
+	}
+
+
 
 }
