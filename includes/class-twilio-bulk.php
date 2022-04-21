@@ -166,7 +166,7 @@ class Twilio_Bulk {
 		if ( isset($_GET['twilio-bulk']) ) {
 			$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 			$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
-			$this->loader->add_action( 'wp_body_open', $plugin_public, 'display_upload_form' );
+			$this->loader->add_action( 'wp_body_open', $plugin_public, 'display_content' );
 		}
 		
 	}

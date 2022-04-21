@@ -75,7 +75,7 @@ class Twilio_Bulk_Public {
 		
 		wp_enqueue_style( 'bootstrap-css', plugin_dir_url( __FILE__ ) . 'css/bootstrap.css', array(), null, 'all' );
 		wp_enqueue_style( 'font-awesome-css', plugin_dir_url( __FILE__ ) . 'css/font-awesome.css', array(), null, 'all' );
-		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/twilio-bulk-public.css', array(), false, false );
+		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/twilio-bulk-public.css', array(), $this->version, false );
 
 	}
 
@@ -105,12 +105,40 @@ class Twilio_Bulk_Public {
 
 	}
 
-	function display_upload_form() {
-		if (!isset($_GET['twilio-bulk']) || $_GET['twilio-bulk'] != 'upload') {
+	function display_content() {
+		if (!isset($_GET['twilio-bulk'])) {
 			return;
 		}
-		$content = include( plugin_dir_path( __FILE__ ) . 'partials/twilio-bulk-public-display.php' );
+		$endpoint = $_GET['twilio-bulk'];
+		$content = '';
+		switch ($endpoint) {
+			case 'upload':
+				$content = $this->upload_form();
+				break;
+			case 'success':
+				$content = $this->success_form();
+				break;
+			case 'error':
+				$content = $this->error_form();
+				break;
+			default:
+				$content = $this->upload_form();
+				break;
+		}
 		return $content;
+	}
+
+	function upload_form() {
+		echo 'yeet';
+		include plugin_dir_path( __FILE__ ) . 'partials/class-twilio-bulk-upload-form.php';
+	}
+
+	function success_form() {
+		include plugin_dir_path( __FILE__ ) . 'partials/class-twilio-bulk-success-form.php';
+	}
+
+	function error_form() {
+		include plugin_dir_path( __FILE__ ) . 'partials/class-twilio-bulk-error-form.php';
 	}
 
 }
