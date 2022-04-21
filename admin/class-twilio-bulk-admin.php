@@ -74,7 +74,7 @@ class Twilio_Bulk_Admin {
 		 */
 
 		 // Bootstrap on Admin Panel by Rush Frisby: https://rushfrisby.com/using-bootstrap-in-wordpress-admin-panel
-		wp_enqueue_style( 'bootstrap-min-css', plugin_dir_url( __FILE__ ) . 'css/bootstrap-admin-wrapper.css', array(), false, 'all' );
+		wp_enqueue_style( 'bootstrap-admin-wrapper', plugin_dir_url( __FILE__ ) . 'css/bootstrap-admin-wrapper.css', array(), $this->version, 'all' );
 
 		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/twilio-bulk-admin.css', array(), $this->version, 'all' );
 
@@ -125,7 +125,7 @@ class Twilio_Bulk_Admin {
 
 	// Callback function for twilio_bulk_admin_menu to grab php files and display on Admin Dashboard
 	public function twilio_bulk_admin_page() {
-		include_once( plugin_dir_path( __FILE__ ) . 'partials/twilio-bulk-admin-display.php' );
+		include_once( plugin_dir_path( __FILE__ ) . 'partials/twilio-bulk-admin-dashboard.php' );
 	}
 
 	public function twilio_bulk_campaigns_page() {
