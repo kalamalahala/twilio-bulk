@@ -2,3 +2,7 @@
  * All of the CSS for your admin-specific functionality should be
  * included in this file.
  */
+
+div .bootstrap-wrapper {
+ margin: 20px 20px 0 0;
+}

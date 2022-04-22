@@ -144,8 +144,9 @@ class Twilio_Bulk {
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
 
-		// Add admin menu
+		// Add admin menu and settings
 		$this->loader->add_action( 'admin_menu', $plugin_admin, 'twilio_bulk_admin_menu' );
+		$this->loader->add_action( 'admin_init', $plugin_admin, 'twilio_bulk_admin_settings' );
 
 	}
 

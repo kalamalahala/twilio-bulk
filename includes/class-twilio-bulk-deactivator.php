@@ -26,11 +26,14 @@ class Twilio_Bulk_Deactivator {
 		$contacts = $prefix . 'twilio_bulk_contacts'; // Contact List && Caller ID
 		$uploads = $prefix . 'twilio_bulk_uploads'; // Uploads
 		$campaigns = $prefix . 'twilio_bulk_campaigns'; // Campaigns
+		$programmable_messages = $prefix . 'twilio_bulk_programmable_messages'; // Programmable Messages
+
 		$sql[] = "DROP TABLE $messages;";
 		$sql[] = "DROP TABLE $conversations;";
 		$sql[] = "DROP TABLE $contacts;";
 		$sql[] = "DROP TABLE $uploads;";
 		$sql[] = "DROP TABLE $campaigns;";
+		$sql[] = "DROP TABLE $programmable_messages;";
 
 		foreach ($sql as $query) {
 			$wpdb->query($query);

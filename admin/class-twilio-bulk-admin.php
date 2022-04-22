@@ -73,10 +73,15 @@ class Twilio_Bulk_Admin {
 		 * class.
 		 */
 
-		 // Bootstrap on Admin Panel by Rush Frisby: https://rushfrisby.com/using-bootstrap-in-wordpress-admin-panel
+		 // Bootstrap on Admin Panel by Custom Wrapper: https://blog.shaharia.com/add-bootstrap-css-in-wordpress-plugin-page
 		wp_enqueue_style( 'bootstrap-admin-wrapper', plugin_dir_url( __FILE__ ) . 'css/bootstrap-admin-wrapper.css', array(), $this->version, 'all' );
 
-		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/twilio-bulk-admin.css', array(), $this->version, 'all' );
+		// FontAwesome
+		wp_enqueue_style( 'font-awesome-css', plugin_dir_url( __FILE__ ) . 'css/font-awesome.css', array(), null, 'all' );
+
+
+		// Manual styles as last layer
+		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/twilio-bulk-admin.css', array(), null, 'all' ); 
 
 	}
 
@@ -111,26 +116,63 @@ class Twilio_Bulk_Admin {
 		
 		// Dashboard Menu
 		add_menu_page( 'Twilio Bulk Text', 'Bulk Messaging', 'manage_options', 'twilio-bulk-dashboard', array( $this, 'twilio_bulk_admin_page' ), 'dashicons-format-chat', 26 );
-		
-		// Campaigns Menu
-		add_submenu_page( 'twilio-bulk-dashboard', 'Campaigns', 'Campaigns', 'manage_options', 'twilio-bulk-campaigns', array( $this, 'twilio_bulk_campaigns_page' ) );
+
+		// Programmable Messages
+		add_submenu_page( 'twilio-bulk-dashboard', 'Programmable Messages', 'Programmable Messages', 'manage_options', 'twilio-bulk-programmable-messages', array( $this, 'twilio_bulk_programmable_messages_page' ) );
 
 		// Contacts Menu
 		add_submenu_page( 'twilio-bulk-dashboard', 'Contacts', 'Contacts', 'manage_options', 'twilio-bulk-contacts', array( $this, 'twilio_bulk_contacts_page' ) );
+		
+		// Campaigns Menu
+		add_submenu_page( 'twilio-bulk-dashboard', 'Create New Campaign', 'Create New Campaign', 'manage_options', 'twilio-bulk-new-campaign', array( $this, 'twilio_bulk_new_campaign_page' ) );
+		add_submenu_page( 'twilio-bulk-dashboard', 'Campaigns', 'View Campaigns', 'manage_options', 'twilio-bulk-campaigns', array( $this, 'twilio_bulk_campaigns_page' ) );
+
 
 		// Reports Menu
 		add_submenu_page( 'twilio-bulk-dashboard', 'Reports', 'Reports', 'manage_options', 'twilio-bulk-reports', array( $this, 'twilio_bulk_reports_page' ) );
 
 	}
 
-	// Callback function for twilio_bulk_admin_menu to grab php files and display on Admin Dashboard
-	public function twilio_bulk_admin_page() {
-		include_once( plugin_dir_path( __FILE__ ) . 'partials/twilio-bulk-admin-dashboard.php' );
+	// Callback function for Loader to register settings
+	public function twilio_bulk_admin_settings() {
+		register_setting( 'twilio_bulk_settings_group', 'twilio_account_sid' );
+		register_setting( 'twilio_bulk_settings_group', 'twilio_account_auth_token' );
+		register_setting( 'twilio_bulk_settings_group', 'twilio_account_phone_number' );
+		// Later on add more settings
+		// register_setting( 'twilio_bulk_settings_group', '' );
+		// register_setting( 'twilio_bulk_settings_group', '' );
 	}
+
+	// Callback function for twilio_bulk_admin_menu
+	public function twilio_bulk_admin_page() {
+		// buffer output
+		ob_start();
+		include_once( plugin_dir_path( __FILE__ ) . 'partials/twilio-bulk-admin-dashboard.php' );
+		$output = ob_get_clean();
+		echo $output;
+	}
+
+	// Callback function for twilio_bulk_programmable_messages_create
+	public function twilio_bulk_programmable_messages_page() {
+		// buffer output
+		ob_start();
+		include_once( plugin_dir_path( __FILE__ ) . 'partials/twilio-bulk-programmable-messages.php' );
+		$output = ob_get_clean();
+		echo $output;
+	}
+
 
 	public function twilio_bulk_campaigns_page() {
 		// include_once( plugin_dir_path( __FILE__ ) . 'partials/twilio-bulk-admin-campaigns.php' );
 		echo '<h1>Campaigns</h1>';
+	}
+
+	public function twilio_bulk_new_campaign_page() {
+		// buffer output
+		ob_start();
+		include_once( plugin_dir_path( __FILE__ ) . 'partials/twilio-bulk-admin-new-campaign.php' );
+		$output = ob_get_clean();
+		echo $output;
 	}
 
 	public function twilio_bulk_contacts_page() {
