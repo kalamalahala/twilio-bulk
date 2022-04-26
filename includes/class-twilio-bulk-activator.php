@@ -87,7 +87,7 @@ class Twilio_Bulk_Activator
 				campaign_date_canceled DATETIME,
 				campaign_date_paused DATETIME,
 				campaign_date_resumed DATETIME,
-				campaign_date_queued DATETIME,
+				campaign_date_queued DATETIME
 			) $charset_collate;",
 
 			"CREATE TABLE $contacts (
@@ -113,7 +113,7 @@ class Twilio_Bulk_Activator
 				upload_url VARCHAR(255) NOT NULL,
 				upload_date_created DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
 				upload_date_updated DATETIME,
-				upload_date_deleted DATETIME,
+				upload_date_deleted DATETIME
 			) $charset_collate;",
 
 			"CREATE TABLE $programmable_messages (
@@ -121,9 +121,10 @@ class Twilio_Bulk_Activator
 				programmable_message_uid VARCHAR(255) NOT NULL,
 				programmable_message_name VARCHAR(255) NOT NULL,
 				programmable_message_description VARCHAR(255) NOT NULL DEFAULT '',
+				programmable_message_content VARCHAR(255) NOT NULL DEFAULT '',
 				programmable_message_date_created DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
 				programmable_message_date_updated DATETIME,
-				programmable_message_date_last_message_sent DATETIME NOT NULL,
+				programmable_message_date_last_message_sent DATETIME NOT NULL
 			) $charset_collate;",
 
 		);

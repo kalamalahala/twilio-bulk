@@ -27,7 +27,6 @@ class Twilio_Bulk_Deactivator {
 		$uploads = $prefix . 'twilio_bulk_uploads'; // Uploads
 		$campaigns = $prefix . 'twilio_bulk_campaigns'; // Campaigns
 		$programmable_messages = $prefix . 'twilio_bulk_programmable_messages'; // Programmable Messages
-
 		$sql[] = "DROP TABLE $messages;";
 		$sql[] = "DROP TABLE $conversations;";
 		$sql[] = "DROP TABLE $contacts;";
