@@ -14,7 +14,8 @@
  * @subpackage Twilio_Bulk/includes
  * @author     Tyler Karle <tyler.karle@icloud.com>
  */
-class Twilio_Bulk {
+class Twilio_Bulk
+{
 
 	/**
 	 * The loader that's responsible for maintaining and registering all hooks that power
@@ -53,8 +54,9 @@ class Twilio_Bulk {
 	 *
 	 * @since    0.1.0
 	 */
-	public function __construct() {
-		if ( defined( 'TWILIO_BULK_VERSION' ) ) {
+	public function __construct()
+	{
+		if (defined('TWILIO_BULK_VERSION')) {
 			$this->version = TWILIO_BULK_VERSION;
 		} else {
 			$this->version = '0.1.0';
@@ -65,7 +67,6 @@ class Twilio_Bulk {
 		$this->set_locale();
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
-
 	}
 
 	/**
@@ -84,33 +85,33 @@ class Twilio_Bulk {
 	 * @since    0.1.0
 	 * @access   private
 	 */
-	private function load_dependencies() {
+	private function load_dependencies()
+	{
 
 		/**
 		 * The class responsible for orchestrating the actions and filters of the
 		 * core plugin.
 		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-twilio-bulk-loader.php';
+		require_once plugin_dir_path(dirname(__FILE__)) . 'includes/class-twilio-bulk-loader.php';
 
 		/**
 		 * The class responsible for defining internationalization functionality
 		 * of the plugin.
 		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-twilio-bulk-i18n.php';
+		require_once plugin_dir_path(dirname(__FILE__)) . 'includes/class-twilio-bulk-i18n.php';
 
 		/**
 		 * The class responsible for defining all actions that occur in the admin area.
 		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-twilio-bulk-admin.php';
+		require_once plugin_dir_path(dirname(__FILE__)) . 'admin/class-twilio-bulk-admin.php';
 
 		/**
 		 * The class responsible for defining all actions that occur in the public-facing
 		 * side of the site.
 		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-twilio-bulk-public.php';
+		require_once plugin_dir_path(dirname(__FILE__)) . 'public/class-twilio-bulk-public.php';
 
 		$this->loader = new Twilio_Bulk_Loader();
-
 	}
 
 	/**
@@ -122,12 +123,12 @@ class Twilio_Bulk {
 	 * @since    0.1.0
 	 * @access   private
 	 */
-	private function set_locale() {
+	private function set_locale()
+	{
 
 		$plugin_i18n = new Twilio_Bulk_i18n();
 
-		$this->loader->add_action( 'plugins_loaded', $plugin_i18n, 'load_plugin_textdomain' );
-
+		$this->loader->add_action('plugins_loaded', $plugin_i18n, 'load_plugin_textdomain');
 	}
 
 	/**
@@ -137,16 +138,23 @@ class Twilio_Bulk {
 	 * @since    0.1.0
 	 * @access   private
 	 */
-	private function define_admin_hooks() {
+	private function define_admin_hooks()
+	{
 
-		$plugin_admin = new Twilio_Bulk_Admin( $this->get_plugin_name(), $this->get_version() );
+		$plugin_admin = new Twilio_Bulk_Admin($this->get_plugin_name(), $this->get_version());
 
-		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
-		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
+		$this->loader->add_action('admin_enqueue_scripts', $plugin_admin, 'enqueue_styles');
+		$this->loader->add_action('admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts');
 
 		// Add admin menu and settings
-		$this->loader->add_action( 'admin_menu', $plugin_admin, 'twilio_bulk_admin_menu' );
-		$this->loader->add_action( 'admin_init', $plugin_admin, 'twilio_bulk_admin_settings' );
+		$this->loader->add_action('admin_menu', $plugin_admin, 'twilio_bulk_admin_menu');
+		$this->loader->add_action('admin_init', $plugin_admin, 'twilio_bulk_admin_settings');
+
+		// Include AJAX methods and add_action
+		// require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-twilio-bulk-ajax-methods.php';
+
+		// add_action AJAX hook
+		$this->loader->add_action( 'wp_ajax_twilio_bulk', $plugin_admin, 'twilio_bulk_ajax_methods' );
 
 	}
 
@@ -157,9 +165,10 @@ class Twilio_Bulk {
 	 * @since    0.1.0
 	 * @access   private
 	 */
-	private function define_public_hooks() {
+	private function define_public_hooks()
+	{
 
-		$plugin_public = new Twilio_Bulk_Public( $this->get_plugin_name(), $this->get_version() );
+		$plugin_public = new Twilio_Bulk_Public($this->get_plugin_name(), $this->get_version());
 
 		// Check path
 		// global $wp;
@@ -174,20 +183,20 @@ class Twilio_Bulk {
 
 		// echo __ROOT__;
 
-		if ( isset($_GET['twilio-bulk']) ) { // Add CSS and JS when twilio-bulk is a parameter in the URL
-			$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
-			$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
-			$this->loader->add_filter( 'page_template', $plugin_public, 'include_template_file' );
+		if (isset($_GET['twilio-bulk'])) { // Add CSS and JS when twilio-bulk is a parameter in the URL
+			$this->loader->add_action('wp_enqueue_scripts', $plugin_public, 'enqueue_styles');
+			$this->loader->add_action('wp_enqueue_scripts', $plugin_public, 'enqueue_scripts');
+			$this->loader->add_filter('page_template', $plugin_public, 'include_template_file');
 		}
-		
 	}
-	
+
 	/**
 	 * Run the loader to execute all of the hooks with WordPress.
 	 *
 	 * @since    0.1.0
 	 */
-	public function run() {
+	public function run()
+	{
 		$this->loader->run();
 	}
 
@@ -198,7 +207,8 @@ class Twilio_Bulk {
 	 * @since     0.1.0
 	 * @return    string    The name of the plugin.
 	 */
-	public function get_plugin_name() {
+	public function get_plugin_name()
+	{
 		return $this->plugin_name;
 	}
 
@@ -208,7 +218,8 @@ class Twilio_Bulk {
 	 * @since     0.1.0
 	 * @return    Twilio_Bulk_Loader    Orchestrates the hooks of the plugin.
 	 */
-	public function get_loader() {
+	public function get_loader()
+	{
 		return $this->loader;
 	}
 
@@ -218,7 +229,10 @@ class Twilio_Bulk {
 	 * @since     0.1.0
 	 * @return    string    The version number of the plugin.
 	 */
-	public function get_version() {
+	public function get_version()
+	{
 		return $this->version;
 	}
+
+
 }

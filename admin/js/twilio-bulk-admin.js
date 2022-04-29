@@ -1,6 +1,5 @@
-(function( $ ) {
-	'use strict';
-
+(function ($) {
+	"use strict";
 	/**
 	 * All of the code for your admin-facing JavaScript source
 	 * should reside in this file.
@@ -28,52 +27,52 @@
 	 * Although scripts in the WordPress core, Plugins and Themes may be
 	 * practising this, we should strive to set a better example in our own work.
 	 */
+});(jQuery);
 
-	// Replace "#twilio-header" with "Hello Hello" on click
-	$('#twilio-header').click(function() {
-		$('#twilio-header').text('Hello Hello');
-	}
-	)
+jQuery(document).on("change", "#twilio-campaign-message",  function() {
+	// Get the message body from AJAX
+	console.log(jQuery("#twilio-campaign-message").val());
+	var message_id = jQuery(this).val();
+	var data = {
+		action: 'twilio_bulk',
+		twilio_bulk_action: 'get_programmable_message',
+		programmable_message_id: message_id,
+		nonce: twilio_bulk_ajax.nonce
+	};
 
+	/* Send the AJAX request
+	*  Add the information to the div, and show the div
+	*/
+	jQuery.post(twilio_bulk_ajax.ajaxurl, data, function(response) {
+		response = JSON.parse(response);
+		jQuery("#twilio-programmable-message-name").text(response[0].programmable_message_name);
+		jQuery("#twilio-programmable-message-description").text(response[0].programmable_message_description);
+		jQuery("#twilio-programmable-message-body").text(response[0].programmable_message_content);
+		jQuery("#twilio-campaign-message-information").removeClass('d-none');
+	});
+});
 
-
-	
-})( jQuery );
-
-
-// animate #twilio-header with vanilla javascript
-// https://www.w3schools.com/howto/howto_js_animate.asp
-
-let counter = document.getElementById("counter-block");
-let counterValue = 0;
-let counterCurrent = /* query number of sales */ 1283;
-let delimiter = ",";
-
-// get current number of sales from wordpress gravityforms json api
-// https://docs.gravityforms.com/rest-api-v2/#get-entries-entry-id
-let route = 'https://thejohnson.group/wp-json/gf/v2/entries/13';
-const results = async () => {
-	const response = await fetch(route);
-	const data = await response.json();
-	console.log(data);
-	counterCurrent = data.length;
-	console.log(counterCurrent);
-}
-// for (let i = counterCurrent; i > counterCurrent; i++) {
-// 	counterValue++;
-// }
-
-// animate #counter-block innerHTML with vanilla javascript
-// from 0 to current amount of sales
-
-// regex insert comma every 3 digits
-
-let counterInterval = setInterval(function() {
-	counter.innerHTML = counterValue.toString().replace(/\B(?=(\d{3})+(?!\d))/g, delimiter);
-	// count faster
-	counterValue = counterValue + Math.floor(Math.random() * 10);
-	// counterValue++;
-	if (counterValue > counterCurrent) {
-		clearInterval(counterInterval);
-	}
+jQuery(document).on("change", "#twilio-file-upload",  function() {
+	// Send file to php spreadsheet handler, return the response
+	var file = jQuery(this).prop('files')[0];
+	var formData = new FormData();
+	formData.append('action', 'twilio_bulk');
+	formData.append('twilio_bulk_action', 'spreadsheet_handler');
+	formData.append('file', file);
+	formData.append('nonce', twilio_bulk_ajax.nonce);
+	jQuery.ajax({
+		url: twilio_bulk_ajax.ajaxurl,
+		type: 'POST',
+		data: formData,
+		cache: false,
+		contentType: false,
+		processData: false,
+		success: function(response) {
+			response = JSON.parse(response);
+			console.log(response);
+		},
+		error: function(response) {
+			console.log(response);
+		}
+	});
 });
