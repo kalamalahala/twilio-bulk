@@ -114,8 +114,12 @@ class Twilio_Bulk_Admin
 		 * class.
 		 */
 
-		 //bootstrap js
+		//bootstrap js
 		wp_enqueue_script('bootstrap-js', plugin_dir_url(__FILE__) . 'js/bootstrap.js', array('jquery'), $this->version, false);
+		// momentjs
+		wp_enqueue_script('moment-js', plugin_dir_url(__FILE__) . 'js/moment.js', array('jquery'), $this->version, false);
+		// // bootstrap-datepicker.min.js
+		// wp_enqueue_script('bootstrap-datepicker-js', plugin_dir_url(__FILE__) . 'js/bootstrap-datepicker.min.js', array('jquery'), $this->version, false);
 
 		// wp_localize_script to point to admin-ajax.php
 		wp_enqueue_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/twilio-bulk-admin.js', array('jquery'), $this->version, false);
@@ -714,7 +718,7 @@ class Twilio_Bulk_Admin
 	 */
 
 	public function twilio_bulk_ajax_methods()
-	{	
+	{
 		// Initialize, check nonce, set empty response array
 		wp_verify_nonce($_POST['nonce'], 'twilio_bulk_nonce');
 		$response = array();
@@ -735,31 +739,41 @@ class Twilio_Bulk_Admin
 				} else { // No errors, proceed with upload, move file with wordpress
 					$spreadsheet_file = wp_upload_bits($_FILES['file']['name'], null, file_get_contents($_FILES['file']['tmp_name']));
 					$path = $spreadsheet_file['file'];
-					// $path = get_site_url() . $path['path'];
-
-					// $response['spreadsheet_file'] = $path;
-
-					// // Dump $spreadsheet_file to response
-					// foreach ($path as $key => $value) {
-					// 	$response[$key] = $value;
-					// }
-
-					// $response['dirname'] = wp_upload_dir( null, false );
-
-					// $response['true_url'] = $response['dirname']['path'] . '/' . $spreadsheet_file['file'];
-
-
-
-					// // Dump upload_dir to response
-					// foreach ($upload_dir as $key => $value) {
-					// 	$response[$key] = $value;
-					// }
-
 					$spreadsheet_handler = new SpreadSheetHandler($path);
 					$json = $spreadsheet_handler->get_spreadsheet_json();
 					$response['json'] = $json;
 				}
-			}
+				break;
+			case 'campaign_submit':
+				// Create Campaign
+				// Use SpreadSheetHandler to create Contacts for each row
+				// Schedule initial message based on date and units
+				// Schedule follow up message based on date and units if follow up is Yes
+				$upload = (!empty($_FILES['file']['name']) ? wp_upload_bits($_FILES['file']['name'], null, file_get_contents($_FILES['file']['tmp_name'])): null);
+				$set_phone_number = $_POST['#twilio-campaign-upload-key-select'];
+				$path = $upload['file'];
+
+				// Echo all $_POST data to $response
+				foreach ($_POST as $key => $value) {
+					$response[$key] = $value;
+				}
+				// add $set_phone_number and $path
+				$response['set_phone_number'] = $set_phone_number;
+				$response['path'] = $path;
+
+				// $follow_up_message = ($_POST['twilio-campaign-follow-up-yes'] == 'yes') ? true : false;
+				// $spreadsheet_handler = new SpreadSheetHandler($path);
+				// $contacts = $spreadsheet_handler->create_contacts_from_sheet( $set_phone_number );
+				
+
+				// Send campaign at scheduled time to each contact in $contacts
+				// $campaign_uid = $this->create_campaign($_POST);
+
+
+				$response['yello'] = 'yello';
+				break;
+		}
+
 		$response_json = json_encode($response);
 		wp_send_json($response_json);
 	}

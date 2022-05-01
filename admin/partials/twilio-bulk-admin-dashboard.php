@@ -11,6 +11,24 @@
  * @package    Twilio_Bulk
  * @subpackage Twilio_Bulk/admin/partials
  */
+
+    use Twilio\Rest\Client;
+    $sid = (get_option('twilio_account_sid')) ? get_option('twilio_account_sid') : '';
+    $token = (get_option('twilio_account_auth_token')) ? get_option('twilio_account_auth_token') : '';
+
+    // If the tokens are set, ask for existing phone numbers
+    if (!empty($sid) && !empty($token)) {
+        $twilio = new Client($sid, $token);
+        $twilio_bulk_phone_numbers = $twilio->incomingPhoneNumbers->read();
+
+        // Assemble a Select Option group with each number to echo later
+        $sending_number_form_html = '<select name="twilio_bulk_sending_number" id="twilio_bulk_sending_number" class="form-control">';
+        foreach ($twilio_bulk_phone_numbers as $sending_number) {
+            $sending_number_form_html .= '<option value="' . $sending_number->phoneNumber . '">' . $sending_number->phoneNumber . ': ' . $sending_number->friendlyName . '</option>';
+        }
+        $sending_number_form_html .= '</select>';
+    }
+    
 ?>
 
 <!-- This file should primarily consist of HTML with a little bit of PHP. -->
@@ -45,7 +63,7 @@
             <div class="form-group row">
                 <label for="twilio-phone-number" class="col-sm-2 col-form-label">Twilio Phone Number</label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" id="twilio-phone-number" name="twilio-phone-number" placeholder="Twilio Phone Number" aria-describedby="twilio-phone-number-tip" value="<?php echo esc_attr(get_option('twilio_account_phone_number')); ?>">
+                    <?php echo (!empty($sending_number_form_html)) ? $sending_number_form_html : '<p>No Twilio Phone Numbers found. Please add a Phone Number to your account.</p>'; ?>
                     <p id="twilio-phone-number-tip" class="form-text text-muted mb-0">Your Twilio phone number. If you don't have one, you can <a href="https://www.twilio.com/console/phone-numbers/incoming" target="_blank" title="Twilio Phone Numbers">create one here</a>.</p>
                 </div>
             </div>
@@ -78,10 +96,12 @@ if (isset($_POST['twilio-submit'])) {
     $twilio_account_sid = $_POST['twilio-api-sid'];
     $twilio_account_auth_token = $_POST['twilio-api-token'];
     $twilio_account_phone_number = $_POST['twilio-phone-number'];
+    $twilio_account_sending_number = $_POST['twilio_bulk_sending_number'];
     // $twilio_account_file_upload = $_FILES['twilio-file-upload'];
     update_option('twilio_account_sid', $twilio_account_sid);
     update_option('twilio_account_auth_token', $twilio_account_auth_token);
     update_option('twilio_account_phone_number', $twilio_account_phone_number);
+    update_option('twilio_account_sending_number', $twilio_account_sending_number);
     // update_option('twilio_account_file_upload', $twilio_account_file_upload);
 }
 
