@@ -24,9 +24,11 @@
 // Include Composer Autoloader
 require __ROOT__ . '\twilio-bulk\vendor\autoload.php';
 require __ROOT__ . '\twilio-bulk\admin\classes\phpspreadsheet-handler.php';
+require __ROOT__ . '\twilio-bulk\includes\class-twilio-bulk-ajax-handler.php';
 
 use Twilio\Rest\Client;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use twilio_bulk\TwilioBulkAjax;
 
 class Twilio_Bulk_Admin
 {
@@ -118,12 +120,9 @@ class Twilio_Bulk_Admin
 		wp_enqueue_script('bootstrap-js', plugin_dir_url(__FILE__) . 'js/bootstrap.js', array('jquery'), $this->version, false);
 		// momentjs
 		wp_enqueue_script('moment-js', plugin_dir_url(__FILE__) . 'js/moment.js', array('jquery'), $this->version, false);
-		// // bootstrap-datepicker.min.js
-		// wp_enqueue_script('bootstrap-datepicker-js', plugin_dir_url(__FILE__) . 'js/bootstrap-datepicker.min.js', array('jquery'), $this->version, false);
-
 		// wp_localize_script to point to admin-ajax.php
-		wp_enqueue_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/twilio-bulk-admin.js', array('jquery'), $this->version, false);
-		wp_localize_script($this->plugin_name, 'twilio_bulk_ajax', array('ajaxurl' => admin_url('admin-ajax.php'), 'nonce' => wp_create_nonce('twilio_bulk_nonce')));
+		wp_enqueue_script('twilio_bulk_ajax', plugin_dir_url(__FILE__) . 'js/twilio-bulk-admin.js', array('jquery'), $this->version, false);
+		wp_localize_script('twilio_bulk_ajax', 'twilio_bulk_ajax', array('ajaxurl' => admin_url('admin-ajax.php'), 'nonce' => wp_create_nonce('twilio_bulk_nonce')));
 	}
 
 	// Callback function for Loader class to create Main menu on Admin Dashboard
@@ -713,68 +712,46 @@ class Twilio_Bulk_Admin
 		return $campaign_uid;
 	}
 
+	// Move this function to its include file: /twilio-bulk/includes/class-twilio-bulk-ajax-handler.php
 	/**
 	 * Handle AJAX requests for all plugin methods.
 	 */
 
 	public function twilio_bulk_ajax_methods()
 	{
-		// Initialize, check nonce, set empty response array
-		wp_verify_nonce($_POST['nonce'], 'twilio_bulk_nonce');
-		$response = array();
+		// Assemble init data for AJAX request
+		$action = (isset($_POST['action'])) ? $_POST['action'] : '';
+		$method = (isset($_POST['twilio_bulk_action'])) ? $_POST['twilio_bulk_action'] : '';
+		$formData = (isset($_POST)) ? $_POST : '';
+		$nonce = (isset($_POST['nonce'])) ? $_POST['nonce'] : 'twilio_bulk_ajax_nonce';
 
-		// Switch based on action
-		switch ($_POST['twilio_bulk_action']) {
-			case 'get_programmable_message':
-				$message = $this->get_programmable_messages(intval($_POST['programmable_message_id']), true);
-				$message = json_decode($message, true);
-				foreach ($message as $key => $value) {
-					$response[$key] = $value;
-				}
-				break;
-			case 'spreadsheet_handler':
-				// Check for an error in the upload
-				if (0 < $_FILES['file']['error']) {
-					$response['error'] = 'Error: ' . $_FILES['file']['error'];
-				} else { // No errors, proceed with upload, move file with wordpress
+		$ajax = new TwilioBulkAjax( $formData, $action, $method, null, null, $nonce );
+
+			switch ($method) {
+				case 'spreadsheet_initial_upload':
+					// Handle upload before sending to AJAX class
+					if (0 < $_FILES['file']['error']) {
+						$response['error'] = 'Error: ' . $_FILES['file']['error'];
+					} else { 
+					// No errors, proceed with upload, move file with wordpress
 					$spreadsheet_file = wp_upload_bits($_FILES['file']['name'], null, file_get_contents($_FILES['file']['tmp_name']));
+					}
+					// Get path to uploaded file
 					$path = $spreadsheet_file['file'];
-					$spreadsheet_handler = new SpreadSheetHandler($path);
-					$json = $spreadsheet_handler->get_spreadsheet_json();
-					$response['json'] = $json;
-				}
-				break;
-			case 'campaign_submit':
-				// Create Campaign
-				// Use SpreadSheetHandler to create Contacts for each row
-				// Schedule initial message based on date and units
-				// Schedule follow up message based on date and units if follow up is Yes
-				$upload = (!empty($_FILES['file']['name']) ? wp_upload_bits($_FILES['file']['name'], null, file_get_contents($_FILES['file']['tmp_name'])): null);
-				$set_phone_number = $_POST['#twilio-campaign-upload-key-select'];
-				$path = $upload['file'];
 
-				// Echo all $_POST data to $response
-				foreach ($_POST as $key => $value) {
-					$response[$key] = $value;
-				}
-				// add $set_phone_number and $path
-				$response['set_phone_number'] = $set_phone_number;
-				$response['path'] = $path;
-
-				// $follow_up_message = ($_POST['twilio-campaign-follow-up-yes'] == 'yes') ? true : false;
-				// $spreadsheet_handler = new SpreadSheetHandler($path);
-				// $contacts = $spreadsheet_handler->create_contacts_from_sheet( $set_phone_number );
-				
-
-				// Send campaign at scheduled time to each contact in $contacts
-				// $campaign_uid = $this->create_campaign($_POST);
-
-
-				$response['yello'] = 'yello';
-				break;
-		}
-
-		$response_json = json_encode($response);
-		wp_send_json($response_json);
+					// Send file to AJAX class
+					$ajax->spreadsheet_initial_upload( $path );
+					break;
+				case 'campaign_submit':
+					$ajax->campaign_submit();
+					break;
+				case 'get_programmable_messages':
+					$ajax->get_programmable_messages(0, true);
+					break;
+				default:
+					wp_send_json(array('error' => 'Method not found', 'POST' => $formData));
+					wp_die();
+			}
 	}
+		/* This has been moved to the Handler class in includes/class-twilio-bulk-ajax-handler.php */
 }

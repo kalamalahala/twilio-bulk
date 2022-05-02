@@ -111,6 +111,11 @@ class Twilio_Bulk
 		 */
 		require_once plugin_dir_path(dirname(__FILE__)) . 'public/class-twilio-bulk-public.php';
 
+		/** 
+		 * AJAX Handler Class
+		 */
+		require_once plugin_dir_path(dirname(__FILE__)) . 'includes/class-twilio-bulk-ajax-handler.php';
+
 		$this->loader = new Twilio_Bulk_Loader();
 	}
 

@@ -12,8 +12,14 @@
  * @subpackage Twilio_Bulk/admin/partials
  */
 
+use twilio_bulk\TwilioBulkAjax;
+
 // Collect programmed messages for form data
-$messages = $this->get_programmable_messages();
+// $messages = $this->get_programmable_messages();
+
+$AJAX_request = new TwilioBulkAjax( 'none', 'twilio_bulk_ajax', 'get_programmable_messages', null, 'twilio_bulk_ajax_nonce' );
+// wp_die('Where is -1 getting returned from?');
+$messages = $AJAX_request->get_programmable_messages(0, false);
 $decoded_messages = json_decode($messages, false);
 ?>
 
@@ -147,12 +153,12 @@ $decoded_messages = json_decode($messages, false);
             </div>
             <!-- Select amount of time to wait before sending follow up message. Apply class d-none if radio #twilio-campaign-follow-up-no No is selected. -->
             <div class="form-group row" id="twilio-campaign-follow-up-time">
-                <label for="twilio-campaign-follow-up-time" class="col-sm-2 col-form-label" aria-describedby="twilio-campaign-follow-up-time-tip">Follow Up Time</label>
+                <div class="col-sm-2"><label for="twilio-campaign-follow-up-time" class="col-form-label" aria-describedby="twilio-campaign-follow-up-time-tip">Follow Up Time</label></div>
                 <div class="col-sm-10 row">
                     <!-- Number input, range 0-60 -->
-                    <input type="number" min="0" max="60" class="form-control col-sm-6" id="twilio-campaign-follow-up-time" name="twilio-campaign-follow-up-time" placeholder="Follow Up Time" required value="0">
+                    <input type="number" min="0" max="60" class="form-control col-sm-2" id="twilio-campaign-follow-up-time" name="twilio-campaign-follow-up-time" placeholder="Follow Up Time" required value="0">
                     <!-- Units of time in a Select input: seconds, minutes, hours, days -->
-                    <select class="form-control col-sm-6" id="twilio-campaign-follow-up-time-units" name="twilio-campaign-follow-up-time-units" placeholder="Follow Up Time Units" required>
+                    <select class="form-control col-sm-6 ml-2" id="twilio-campaign-follow-up-time-units" name="twilio-campaign-follow-up-time-units" placeholder="Follow Up Time Units" required>
                         <option value="seconds">Seconds</option>
                         <option value="minutes">Minutes</option>
                         <option value="hours">Hours</option>
