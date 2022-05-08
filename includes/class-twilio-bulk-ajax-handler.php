@@ -16,7 +16,7 @@ class TwilioBulkAjax {
     /**
      * Constructor.
      */
-    public function __construct($post_data = '', string $action = '', string $method = '', array|object|string $data = null, string $file = null, string $nonce = null)
+    public function __construct($post_data = '', string $action = '', string $method = '', mixed $data = null, string $file = null, string $nonce = null)
     {    
         // Collect constructor data
         $this->action = $action;
@@ -68,11 +68,11 @@ class TwilioBulkAjax {
      * 
      * Ajax is true by default, but can be set to false to return a JSON object.
      * 
-     * @param int|array $id = 0
+     * @param int $id = 0
      * @param boolean $ajax = true
      * @return string as JSON
      */
-	public function get_programmable_messages(int|array $id = 0, bool $ajax = true)
+	public function get_programmable_messages(int $id = 0, bool $ajax = true)
 	{
 		// Get Programmable Messages
 		global $wpdb;

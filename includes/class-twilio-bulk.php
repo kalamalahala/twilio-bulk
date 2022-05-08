@@ -92,29 +92,29 @@ class Twilio_Bulk
 		 * The class responsible for orchestrating the actions and filters of the
 		 * core plugin.
 		 */
-		require_once plugin_dir_path(dirname(__FILE__)) . 'includes/class-twilio-bulk-loader.php';
+		require_once plugin_dir_path( __FILE__ ) . 'class-twilio-bulk-loader.php';
 
 		/**
 		 * The class responsible for defining internationalization functionality
 		 * of the plugin.
 		 */
-		require_once plugin_dir_path(dirname(__FILE__)) . 'includes/class-twilio-bulk-i18n.php';
+		require_once plugin_dir_path( __FILE__ ) . 'class-twilio-bulk-i18n.php';
 
 		/**
 		 * The class responsible for defining all actions that occur in the admin area.
 		 */
-		require_once plugin_dir_path(dirname(__FILE__)) . 'admin/class-twilio-bulk-admin.php';
+		require_once plugin_dir_path( __FILE__ ) . '../admin/class-twilio-bulk-admin.php';
 
 		/**
 		 * The class responsible for defining all actions that occur in the public-facing
 		 * side of the site.
 		 */
-		require_once plugin_dir_path(dirname(__FILE__)) . 'public/class-twilio-bulk-public.php';
+		require_once plugin_dir_path( __FILE__ ) . '../public/class-twilio-bulk-public.php';
 
 		/** 
 		 * AJAX Handler Class
 		 */
-		require_once plugin_dir_path(dirname(__FILE__)) . 'includes/class-twilio-bulk-ajax-handler.php';
+		require_once plugin_dir_path( __FILE__ ) . 'class-twilio-bulk-ajax-handler.php';
 
 		$this->loader = new Twilio_Bulk_Loader();
 	}
@@ -156,7 +156,7 @@ class Twilio_Bulk
 		$this->loader->add_action('admin_init', $plugin_admin, 'twilio_bulk_admin_settings');
 
 		// Include AJAX methods and add_action
-		// require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-twilio-bulk-ajax-methods.php';
+		// require_once plugin_dir_path(  __FILE__ ) . 'admin/class-twilio-bulk-ajax-methods.php';
 
 		// add_action AJAX hook
 		$this->loader->add_action( 'wp_ajax_twilio_bulk', $plugin_admin, 'twilio_bulk_ajax_methods' );

@@ -129,7 +129,7 @@ class Twilio_Bulk_Activator
 
 		);
 
-		require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+		require_once( plugin_dir_path( __FILE__ ) . 'wp-admin/includes/upgrade.php');
 		dbDelta($sql);
 
 	}

@@ -22,9 +22,9 @@
  */
 
 // Include Composer Autoloader
-require __ROOT__ . '\twilio-bulk\vendor\autoload.php';
-require __ROOT__ . '\twilio-bulk\admin\classes\phpspreadsheet-handler.php';
-require __ROOT__ . '\twilio-bulk\includes\class-twilio-bulk-ajax-handler.php';
+require ( plugin_dir_path( __FILE__ ) ) . '../vendor/autoload.php';
+require ( plugin_dir_path( __FILE__ ) ) . 'classes/phpspreadsheet-handler.php';
+require ( plugin_dir_path( __FILE__ ) ) . '../includes/class-twilio-bulk-ajax-handler.php';
 
 use Twilio\Rest\Client;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -281,7 +281,7 @@ class Twilio_Bulk_Admin
 	}
 
 	// Get List of Messages
-	public function get_programmable_messages(int|array $id = 0, bool $single = true)
+	public function get_programmable_messages(int $id = 0, bool $single = true)
 	{
 		// Get Programmable Messages
 		global $wpdb;
