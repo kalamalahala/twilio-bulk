@@ -128,8 +128,9 @@ class Twilio_Bulk_Activator
 			) $charset_collate;",
 
 		);
-
-		require_once( plugin_dir_path( __FILE__ ) . 'wp-admin/includes/upgrade.php');
+		// var_dump( ABSPATH . 'wp-admin/includes/upgrade.php');
+		// die;
+		require_once( ABSPATH . 'wp-admin/includes/upgrade.php');
 		dbDelta($sql);
 
 	}
