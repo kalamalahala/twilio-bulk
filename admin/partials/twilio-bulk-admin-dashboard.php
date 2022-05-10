@@ -39,9 +39,6 @@
     <div class="jumbotron ">
         <h1>Twilio Bulk Messaging</h1>
         <p>Send Bulk SMS to your contacts</p>
-        <p class="alert alert-info">Now with CI/CD!</p><div class="alert alert-primary" role="alert">
-            <strong><i class="fa fa-exclamation-circle" aria-hidden="true"></i> Warning!</strong> <a href="#" class="alert-link">asfasfasdf</a>
-        </div>
     </div>
     <div class="shadow p-4 mb-4 bg-white col-sm-5">
         <h2>Plugin Options</h2>
