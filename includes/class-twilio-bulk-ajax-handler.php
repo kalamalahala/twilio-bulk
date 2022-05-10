@@ -126,7 +126,17 @@ class TwilioBulkAjax {
             $response['error'] = 'Error: ' . $_FILES['file']['error'];
         } else { 
             // No errors, proceed with upload, move file with wordpress
-            $spreadsheet_file = wp_upload_bits($_FILES['file']['name'] . '-processed', null, file_get_contents($_FILES['file']['tmp_name']));
+            // Return the contents of $_FILES array
+            $response['$_FILES'] = $_FILES;
+            wp_send_json($response);
+            wp_die();
+            // try, catch, wp_die
+            try {
+                $spreadsheet_file = wp_upload_bits($_FILES['file']['name'] . '-processed', null, file_get_contents($_FILES['file']['tmp_name']));
+                $response['file'] = $spreadsheet_file;
+            } catch (\Exception $e) {
+                wp_die($e->getMessage());
+            }
         }
         // Get path to uploaded file
         $path = $spreadsheet_file['file'];

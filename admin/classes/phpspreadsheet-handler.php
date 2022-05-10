@@ -56,4 +56,8 @@ class SpreadSheetHandler {
 
     }
 
+    public function create_contact_list( mixed $upload_form_data ) {
+        return $upload_form_data;
+    }
+
 } // End of class

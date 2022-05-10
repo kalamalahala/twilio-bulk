@@ -15,20 +15,20 @@
     use Twilio\Rest\Client;
     $sid = (get_option('twilio_account_sid')) ? get_option('twilio_account_sid') : '';
     $token = (get_option('twilio_account_auth_token')) ? get_option('twilio_account_auth_token') : '';
+    $sending_number_selected = (get_option('twilio_account_sending_number')) ? get_option('twilio_account_sending_number') : '';
 
     // If the tokens are set, ask for existing phone numbers
     if (!empty($sid) && !empty($token)) {
         $twilio = new Client($sid, $token);
         $twilio_bulk_phone_numbers = $twilio->incomingPhoneNumbers->read();
 
-        // Assemble a Select Option group with each number to echo later
-        $sending_number_form_html = '<select name="twilio_bulk_sending_number" id="twilio_bulk_sending_number" class="form-control">';
+        // Assemble a Select Option group with each number to echo later if the Sending Number is not set in Options
+        $sending_number_form_html = '<select name="twilio_bulk_select_sending_number" id="twilio_bulk_select_sending_number" class="form-control">';
         foreach ($twilio_bulk_phone_numbers as $sending_number) {
-            $sending_number_form_html .= '<option value="' . $sending_number->phoneNumber . '">' . $sending_number->phoneNumber . ': ' . $sending_number->friendlyName . '</option>';
+            $sending_number_form_html .= '<option value="' . $sending_number->phoneNumber . '" ' . (($sending_number->phoneNumber == $sending_number_selected) ? 'selected' : 'logic fail') . ' >' . $sending_number->phoneNumber . ': ' . $sending_number->friendlyName . '</option>';
         }
         $sending_number_form_html .= '</select>';
     }
-    
 ?>
 
 <!-- This file should primarily consist of HTML with a little bit of PHP. -->
@@ -91,18 +91,22 @@
 
 <?php
 // echo '<h2>Handle POST contents and update Wordpress Options on form submit</h2>';
-if (isset($_POST['twilio-submit'])) {
-    // echo '<p>Form submitted!</p>';
-    $twilio_account_sid = $_POST['twilio-api-sid'];
-    $twilio_account_auth_token = $_POST['twilio-api-token'];
-    $twilio_account_phone_number = $_POST['twilio-phone-number'];
-    $twilio_account_sending_number = $_POST['twilio_bulk_sending_number'];
-    // $twilio_account_file_upload = $_FILES['twilio-file-upload'];
-    update_option('twilio_account_sid', $twilio_account_sid);
-    update_option('twilio_account_auth_token', $twilio_account_auth_token);
-    update_option('twilio_account_phone_number', $twilio_account_phone_number);
-    update_option('twilio_account_sending_number', $twilio_account_sending_number);
-    // update_option('twilio_account_file_upload', $twilio_account_file_upload);
-}
+// if (isset($_POST['twilio-submit'])) {
+//     echo '<p>Form submitted!</p>';
+//     echo '<pre>';
+//     echo get_option('twilio_account_sending_number');
+//     var_dump($_POST);
+//     echo '</pre>';
+//     $twilio_account_sid = $_POST['twilio-api-sid'];
+//     $twilio_account_auth_token = $_POST['twilio-api-token'];
+//     $twilio_account_phone_number = $_POST['twilio-phone-number'];
+//     $twilio_account_sending_number = $_POST['twilio_bulk_select_sending_number'];
+//     // $twilio_account_file_upload = $_FILES['twilio-file-upload'];
+//     update_option('twilio_account_sid', $twilio_account_sid);
+//     update_option('twilio_account_auth_token', $twilio_account_auth_token);
+//     // update_option('twilio_account_phone_number', $twilio_account_phone_number);
+//     update_option('twilio_account_sending_number', $twilio_account_sending_number);
+//     // update_option('twilio_account_file_upload', $twilio_account_file_upload);
+// }
 
 ?>

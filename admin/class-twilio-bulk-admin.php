@@ -91,6 +91,15 @@ class Twilio_Bulk_Admin
 		// FontAwesome
 		wp_enqueue_style('font-awesome-css', plugin_dir_url(__FILE__) . 'css/font-awesome.css', array(), null, 'all');
 
+		// jQuery UI css
+		wp_enqueue_style('jquery-ui-css', plugin_dir_url(__FILE__) . 'css/jquery-ui.css', array(), null, 'all');
+		
+		// jQuery Datetimepicker css
+		wp_enqueue_style('jquery-datetimepicker-css', plugin_dir_url(__FILE__) . 'css/jquery.datetimepicker.min.css', array(), null, 'all');
+
+		// Bootstrap Datetimepicker CSS
+		// wp_enqueue_style('bootstrap-datetimepicker-css', plugin_dir_url(__FILE__) . 'css/bootstrap-datetimepicker.min.css', array(), null, 'all');
+
 
 		// Manual styles as last layer
 		wp_enqueue_style($this->plugin_name, plugin_dir_url(__FILE__) . 'css/twilio-bulk-admin.css', array(), null, 'all');
@@ -118,8 +127,20 @@ class Twilio_Bulk_Admin
 
 		//bootstrap js
 		wp_enqueue_script('bootstrap-js', plugin_dir_url(__FILE__) . 'js/bootstrap.js', array('jquery'), $this->version, false);
-		// momentjs
-		wp_enqueue_script('moment-js', plugin_dir_url(__FILE__) . 'js/moment.js', array('jquery'), $this->version, false);
+		// jQuery UI js
+		wp_enqueue_script('jquery-ui-js', plugin_dir_url(__FILE__) . 'js/jquery-ui.js', array('jquery'), $this->version, false);
+		
+		// if page=twilio-bulk-new-campaign, load tempusdominus js
+		if (isset($_GET['page']) && $_GET['page'] == 'twilio-bulk-new-campaign') {
+			// momentjs
+			wp_enqueue_script('moment-js', plugin_dir_url(__FILE__) . 'js/moment.js', array('jquery'), $this->version, false);
+			// popper.min.js
+			wp_enqueue_script('popper-js', plugin_dir_url(__FILE__) . 'js/popper.min.js', array('jquery'), $this->version, false);
+			// jquery-datetimepicker js
+			wp_enqueue_script('jquery-datetimepicker-js', plugin_dir_url(__FILE__) . 'js/jquery.datetimepicker.full.min.js', array('jquery'), $this->version, false);
+			
+		}
+		
 		// wp_localize_script to point to admin-ajax.php
 		wp_enqueue_script('twilio_bulk_ajax', plugin_dir_url(__FILE__) . 'js/twilio-bulk-admin.js', array('jquery'), $this->version, false);
 		wp_localize_script('twilio_bulk_ajax', 'twilio_bulk_ajax', array('ajaxurl' => admin_url('admin-ajax.php'), 'nonce' => wp_create_nonce('twilio_bulk_nonce')));
@@ -217,8 +238,12 @@ class Twilio_Bulk_Admin
 
 	public function twilio_bulk_contacts_page()
 	{
-		// include_once( plugin_dir_path( __FILE__ ) . 'partials/twilio-bulk-admin-contacts.php' );
-		echo '<h1>Contacts</h1>';
+		// buffer output
+		ob_start();
+		include_once(plugin_dir_path(__FILE__) . 'partials/contacts/contacts-read.php');
+		$output = ob_get_clean();
+		echo $output;
+
 	}
 
 	public function twilio_bulk_reports_page()
@@ -724,6 +749,7 @@ class Twilio_Bulk_Admin
 		$method = (isset($_POST['twilio_bulk_action'])) ? $_POST['twilio_bulk_action'] : '';
 		$formData = (isset($_POST)) ? $_POST : '';
 		$nonce = (isset($_POST['nonce'])) ? $_POST['nonce'] : 'twilio_bulk_ajax_nonce';
+		// $fileData = (isset($_FILES)) ? $_FILES : '';
 
 		$ajax = new TwilioBulkAjax( $formData, $action, $method, null, null, $nonce );
 

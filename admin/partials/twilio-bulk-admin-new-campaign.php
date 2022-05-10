@@ -25,24 +25,8 @@ $decoded_messages = json_decode($messages, false);
 
 <div class="bootstrap-wrapper">
     <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.3/moment.min.js" integrity="sha512-x/vqovXY/Q4b+rNjgiheBsA/vbWA3IVvsS8lkQSX1gQ4ggSJx38oI2vREZXpTzhAv6tNUaX81E7QBBzkpDQayA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script> -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.39.0/js/tempusdominus-bootstrap-4.min.js" integrity="sha512-k6/Bkb8Fxf/c1Tkyl39yJwcOZ1P4cRrJu77p83zJjN2Z55prbFHxPs9vN7q3l3+tSMGPDdoH51AEU8Vgo1cgAA==" crossorigin="anonymous"></script>
-    <script type="text/javascript">
-        // Tempus Dominus datetimepicker for #twilio-campaign-send-date input
-        jQuery(function() {
-            jQuery("#twilio-campaign-send-date").datetimepicker({
-                format: "M/D/Y h:mm A",
-                minDate: now_plus_three()
-            });
-        });
-
-        function now_plus_three() {
-            // Get timestamp of current time plus three minutes
-            var date = new Date();
-            date.setMinutes(date.getMinutes() + 3);
-            return date;
-        }
-    </script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.39.0/css/tempusdominus-bootstrap-4.min.css" integrity="sha512-3JRrEUwaCkFUBLK1N8HehwQgu8e23jTH4np5NHOmQOobuC4ROQxFwFgBLTnhcnQRMs84muMh0PnnwXlPq5MGjg==" crossorigin="anonymous" />
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.39.0/js/tempusdominus-bootstrap-4.min.js" integrity="sha512-k6/Bkb8Fxf/c1Tkyl39yJwcOZ1P4cRrJu77p83zJjN2Z55prbFHxPs9vN7q3l3+tSMGPDdoH51AEU8Vgo1cgAA==" crossorigin="anonymous"></script> -->
+    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.39.0/css/tempusdominus-bootstrap-4.min.css" integrity="sha512-3JRrEUwaCkFUBLK1N8HehwQgu8e23jTH4np5NHOmQOobuC4ROQxFwFgBLTnhcnQRMs84muMh0PnnwXlPq5MGjg==" crossorigin="anonymous" /> -->
     <div class="jumbotron ">
         <h1>Create New Campaign</h1>
         <p>Upload a list of contacts, choose your settings, and send your message!</p>
@@ -194,14 +178,26 @@ $decoded_messages = json_decode($messages, false);
             <div class="form-group row">
                 <!-- Send Date datepicker -->
                 <label for="twilio-campaign-send-date" class="col-sm-2 col-form-label" aria-describedby="twilio-campaign-send-date-tip">Send Date</label>
-                <div class="col-sm-10 input-group date">
-                    <input type="text" data-target="#twilio-campaign-send-date" data-toggle="datetimepicker" class="form-control" id="twilio-campaign-send-date" name="twilio-campaign-send-date" placeholder="" required aria-describedby="twilio-campaign-send-date-tip" />
-                    <div class="input-group-append" data-target="#twilio-campaign-send-date" data-toggle="datetimepicker">
+                <div class="col-sm-10 input-group date" id="datetimepicker2">
+                    <input type="text" class="form-control" id="twilio-campaign-send-date" name="twilio-campaign-send-date" placeholder="" required aria-describedby="twilio-campaign-send-date-tip" />
+                    <div class="input-group-append" data-target="twilio-campaign-send-date" data-toggle="datetimepicker2">
                         <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                     </div>
                     <div id="twilio-campaign-send-date-tip" class="form-text text-muted mb-0 col-sm-12">Select a date for your campaign to send.</div>
                 </div>
             </div>
+
+            <script type="text/javascript">
+                // datetimepicker2
+                        jQuery('#twilio-campaign-send-date').datetimepicker({
+                            // set datetimepicker options
+                            format: 'Y-m-d H:i',
+                            datepicker: true,
+                            timepicker: true,
+                            step: 5
+                        });
+
+            </script>
 
             <div class="form-group row">
                 <div class="col-sm-10">
@@ -223,7 +219,7 @@ $decoded_messages = json_decode($messages, false);
 </div>
 
         <!-- print $_POST contents for debugging -->
-        <!-- <div class="container-sm" id="twilio-campaign-post-data">
+        <div class="container-sm" id="twilio-campaign-post-data">
             <div class="row">
                 <div class="col-sm-12 success-message alert alert-success">
                     <h4>POST Data</h4>
@@ -241,4 +237,4 @@ $decoded_messages = json_decode($messages, false);
                     </div>
                 </div>
             </div>
-        </div> -->
+        </div>

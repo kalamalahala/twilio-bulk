@@ -112,7 +112,18 @@ jQuery(document).on("change", "#twilio-file-upload", function () {
     success: function (response) {
       // response = JSON.parse(response);
       // let json = response.json;
-
+      // Remove d-none from #twilio-contact-upload-information and print the response
+      jQuery("#twilio-contact-upload-information").removeClass("d-none");
+      jQuery("#twilio-contact-upload-output").text(function () {
+        var output = "";
+        // Print all key-value pairs from response, readable
+        for (var key in response) {
+          output += key + ": " + response[key] + "\n";
+        }
+        return output;
+      });
+    
+      /*
       // #twilio-programmable-upload-rows
       jQuery("#twilio-campaign-upload-rows").empty().text(response.rows);
       // #twilio-campaign-upload-keys
@@ -190,7 +201,7 @@ jQuery(document).on("change", "#twilio-file-upload", function () {
           "<option value='" + key + "'>" + response.keys[key] + "</option>"
         );
       }
-      
+
       // for (var key in response.keys) {
       //   jQuery("#twilio-campaign-upload-email-select").append(
       //     "<option value='" +
@@ -210,25 +221,27 @@ jQuery(document).on("change", "#twilio-file-upload", function () {
       );
 
       // If twilio-campaign-two-name-columns-yes is selected once, append a select input for each key for "Select Name Column 2" in a new row and form group
-      jQuery("#twilio-campaign-two-name-columns-yes").on('change', function () {
+      jQuery("#twilio-campaign-two-name-columns-yes").on("change", function () {
         if (jQuery(this).is(":checked")) {
-        jQuery("#twilio-campaign-upload-information").append(
-          "<div class='row form-group' id='twilio-campaign-surnames'><div class='col-sm-2 form-label col-form-label'><label for='twilio-campaign-name-column-2'>Select Surname</label></div><div class='col-sm-10'><select class='form-control' id='twilio-campaign-name-column-2'>"
-        );
-        jQuery("#twilio-campaign-name-column-2").append(
-          "<option value=''>Select Surname</option>"
-        );
-        for (var key in response.keys) {
+          jQuery("#twilio-campaign-upload-information").append(
+            "<div class='row form-group' id='twilio-campaign-surnames'><div class='col-sm-2 form-label col-form-label'><label for='twilio-campaign-name-column-2'>Select Surname</label></div><div class='col-sm-10'><select class='form-control' id='twilio-campaign-name-column-2'>"
+          );
           jQuery("#twilio-campaign-name-column-2").append(
-            "<option value='" +
-              response.keys[key] +
-              "'>" +
-              response.keys[key] +
-              "</option>"
+            "<option value=''>Select Surname</option>"
+          );
+          for (var key in response.keys) {
+            jQuery("#twilio-campaign-name-column-2").append(
+              "<option value='" +
+                response.keys[key] +
+                "'>" +
+                response.keys[key] +
+                "</option>"
+            );
+          }
+          jQuery("#twilio-campaign-name-column-2").append(
+            "</select></div></div>"
           );
         }
-        jQuery("#twilio-campaign-name-column-2").append("</select></div></div>");
-      }
       });
 
       // Destroy the select input row for "Select Name Column 2" if twilio-campaign-two-name-columns-no is selected
@@ -236,7 +249,7 @@ jQuery(document).on("change", "#twilio-file-upload", function () {
         jQuery("#twilio-campaign-surnames").remove();
       });
 
-      jQuery("#twilio-campaign-upload-information").removeClass("d-none");
+      jQuery("#twilio-campaign-upload-information").removeClass("d-none");*/
     },
     error: function (response) {
       console.log(response);
@@ -247,24 +260,39 @@ jQuery(document).on("change", "#twilio-file-upload", function () {
 // submit when #twilio-bulk-submit is clicked
 // Send all filledout form data to the server #twilio-file-upload file field
 jQuery(document).ready(function () {
-  jQuery("#twilio-bulk-submit").click( function () {
+  jQuery("#twilio-bulk-submit").click(function () {
     jQuery("#twilio-bulk-submit").prop("disabled", true);
     var formData = new FormData();
-    formData.append('file', jQuery('#twilio-file-upload')[0].files[0]);
-    formData.append('name_column', jQuery('#twilio-campaign-name-column').val());
-    formData.append('phone_column', jQuery('#twilio-campaign-upload-phone-select').val());
-    formData.append('email_column', jQuery('#twilio-campaign-upload-email-select').val());
-    formData.append('two_name_columns', jQuery('input[name=twilio-campaign-two-name-columns]:checked').val());
-    formData.append('name_column_2', jQuery('#twilio-campaign-name-column-2').val());
-    formData.append('nonce', twilio_bulk_ajax.nonce);
-    formData.append('action', 'twilio_bulk');
-    formData.append('twilio_bulk_action', 'campaign_submit');
+    formData.append("file", jQuery("#twilio-file-upload")[0].files[0]);
+    formData.append(
+      "name_column",
+      jQuery("#twilio-campaign-name-column").val()
+    );
+    formData.append(
+      "phone_column",
+      jQuery("#twilio-campaign-upload-phone-select").val()
+    );
+    formData.append(
+      "email_column",
+      jQuery("#twilio-campaign-upload-email-select").val()
+    );
+    formData.append(
+      "two_name_columns",
+      jQuery("input[name=twilio-campaign-two-name-columns]:checked").val()
+    );
+    formData.append(
+      "name_column_2",
+      jQuery("#twilio-campaign-name-column-2").val()
+    );
+    formData.append("nonce", twilio_bulk_ajax.nonce);
+    formData.append("action", "twilio_bulk");
+    formData.append("twilio_bulk_action", "campaign_submit");
     // formData.append('_token', jQuery('#csrf-token').val());
 
     // Begin the ajax request
     jQuery.ajax({
       url: twilio_bulk_ajax.ajaxurl,
-      type: 'POST',
+      type: "POST",
       data: formData,
       processData: false,
       contentType: false,
@@ -278,11 +306,10 @@ jQuery(document).ready(function () {
       },
       error: function (response) {
         console.log(response);
-      }
+      },
     });
   });
 });
-
 
 // Toggle visibility of #twilio-campaign-follow-up-message and #twilio-campaign-follow-up-time based on #twilio-campaign-follow-up-yes or #twilio-campaign-follow-up-no
 jQuery(document).ready(
@@ -298,18 +325,49 @@ jQuery(document).ready(
   } /* end of #twilio-campaign-follow-up-yes click */
 );
 
-
 /* Twilio Programmable Message & Create Programmable Message Page Scripts */
 
 jQuery(document).ready(function () {
   // Add a 160 character limit to #twilio-programmable-message-content
   jQuery("#twilio-programmable-message-content").keyup(function () {
-    var text_length = jQuery(this).val().length;
-    var text_remaining = 160 - text_length;
-    // 'text_reamining' characters remaining
-    jQuery("#twilio-programmable-message-content-remaining").text(text_remaining);
-  }
-  );
-}
-);
+    // Get the length of the textarea content
+    var textarea_length = jQuery(this).val().length;
+    var max_length = 160;
+    var remaining_length = max_length - textarea_length;
 
+    // If the textarea content is greater than the max length, truncate the content and shake the textarea
+    if (textarea_length > max_length) {
+      jQuery(this).val(jQuery(this).val().substring(0, max_length));
+      jQuery(this).effect("shake", { distance: 1, times: 2 }, 100, function () {
+        // add a highlight to #twilio-programmable-message-content-remaining
+        jQuery("#twilio-programmable-message-content-remaining").addClass(
+          "text-danger"
+        );
+      });
+      remaining_length = 0;
+    } else {
+      // remove the highlight from #twilio-programmable-message-content-remaining
+      jQuery("#twilio-programmable-message-content-remaining").removeClass(
+        "text-danger"
+      );
+    }
+    jQuery("#twilio-programmable-message-content-remaining").text(
+      remaining_length + " characters remaining"
+    );
+  });
+});
+
+// Send form data to AJAX Handler when #contact-submit is clicked
+jQuery(document).ready(function () {
+  jQuery("#contact-submit").click(function (e) {
+    e.preventDefault();
+    jQuery("#contact-submit").prop("disabled", true);
+    var formData = new FormData();
+    formData.append("name", jQuery("#contact-name").val());
+    formData.append("email", jQuery("#contact-email").val());
+    formData.append("message", jQuery("#contact-message").val());
+    formData.append("nonce", twilio_bulk_ajax.nonce);
+    formData.append("action", "twilio_bulk");
+    formData.append("twilio_bulk_action", "contact_submit");
+  });
+});
