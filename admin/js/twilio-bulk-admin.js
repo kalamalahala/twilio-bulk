@@ -297,3 +297,19 @@ jQuery(document).ready(
     });
   } /* end of #twilio-campaign-follow-up-yes click */
 );
+
+
+/* Twilio Programmable Message & Create Programmable Message Page Scripts */
+
+jQuery(document).ready(function () {
+  // Add a 160 character limit to #twilio-programmable-message-content
+  jQuery("#twilio-programmable-message-content").keyup(function () {
+    var text_length = jQuery(this).val().length;
+    var text_remaining = 160 - text_length;
+    // 'text_reamining' characters remaining
+    jQuery("#twilio-programmable-message-content-remaining").text(text_remaining);
+  }
+  );
+}
+);
+

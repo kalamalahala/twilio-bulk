@@ -75,7 +75,7 @@ if (isset($_POST['twilio_bulk_programmable_message_create'])) {
                 <label for="twilio-programmable-message-content" class="col-sm-2 col-form-label" aria-describedby="twilio-programmable-message-content-tip">Programmable Message Content</label>
                 <div class="col-sm-10">
                     <textarea class="form-control" id="twilio-programmable-message-content" name="twilio_programmable_message_content" placeholder="Programmable Message Content" required></textarea>
-                    <p id="twilio-programmable-message-content-tip" class="form-text text-muted mb-0">Enter the content for your programmable message.</p>
+                    <p id="twilio-programmable-message-content-tip" class="form-text text-muted mb-0">Enter the content for your programmable message. <span id="twilio-programmable-message-content-remaining">160 characters remaining</span></p>
                 </div>
             </div>
             <!-- Submit Button -->
