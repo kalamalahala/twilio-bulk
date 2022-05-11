@@ -29,6 +29,29 @@
         }
         $sending_number_form_html .= '</select>';
     }
+
+    // If $_POST['twilio-bulk-option-submit'] is set, update the options if they have changed from their set values
+    if (isset($_POST['twilio-bulk-option-submit']) && current_user_can('manage_options')) {
+        $submit_msg = '';
+        // Update the Twilio Account SID
+        if (isset($_POST['twilio-api-sid'])) {
+            update_option('twilio_account_sid', sanitize_text_field($_POST['twilio-api-sid']));
+            $submit_msg .= '<div class="notice notice-success is-dismissible"><p>Twilio Account SID Updated</p></div>';
+        }
+        // Update the Twilio Account Auth Token
+        if (isset($_POST['twilio-api-token'])) {
+            update_option('twilio_account_auth_token', sanitize_text_field($_POST['twilio-api-token']));
+            $submit_msg .= '<div class="notice notice-success is-dismissible"><p>Twilio Account Auth Token Updated</p></div>';
+        }
+        // Update the Twilio Account Sending Number
+        if (isset($_POST['twilio-api-sending-number'])) {
+            update_option('twilio_account_sending_number', sanitize_text_field($_POST['twilio-api-sending-number']));
+            $submit_msg .= '<div class="notice notice-success is-dismissible"><p>Twilio Account Sending Number Updated</p></div>';
+        }
+    } else {
+        // If the user is not an admin, do not allow them to change the options
+        $submit_msg = '<div class="notice notice-error is-dismissible"><p>You do not have permission to change these options</p></div>';
+    }
 ?>
 
 <!-- This file should primarily consist of HTML with a little bit of PHP. -->
@@ -67,22 +90,18 @@
                     <p id="twilio-phone-number-tip" class="form-text text-muted mb-0">Your Twilio phone number. If you don't have one, you can <a href="https://www.twilio.com/console/phone-numbers/incoming" target="_blank" title="Twilio Phone Numbers">create one here</a>.</p>
                 </div>
             </div>
-
-
-
-            <!-- Remove d-none to bring file upload back in here -->
-            <div class="form-group form-row d-none">
-                <label for="twilio-file-upload" class="form-label col-2">Upload Contact List</label>
-                <div class="input-group col-3">
-                    <input id="twilio-file-upload" name="twilio-file-upload" type="file" class="form-control-file">
-                </div>
-            </div>
-            <!-- Hidden file Upload -->
-
+            <?php
+             // add a row for $submit_msg if it isn't empty
+                if (!empty($submit_msg)) {
+                    echo '<div class="form-group row">';
+                    echo $submit_msg;
+                    echo '</div>';
+                }
+            ?>
             <div class="form-group row">
 
-                <button name="twilio-submit" type="submit" class="btn btn-primary">Submit</button>&nbsp;&nbsp;
-                <button name="twilio-reset" type="reset" class="btn btn-secondary">Reset</button>
+                <button name="twilio-bulk-option-submit" type="submit" class="btn btn-primary">Submit</button>&nbsp;&nbsp;
+                <button name="twilio-bulk-option-reset" type="reset" class="btn btn-secondary">Reset</button>
 
             </div>
         </form>
