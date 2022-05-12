@@ -127,54 +127,30 @@ class Twilio_Bulk_Admin
 
 		//bootstrap js
 		wp_enqueue_script('bootstrap-js', plugin_dir_url(__FILE__) . 'js/bootstrap.js', array('jquery'), $this->version, false);
-		// jQuery UI js
 		wp_enqueue_script('jquery-ui-js', plugin_dir_url(__FILE__) . 'js/jquery-ui.js', array('jquery'), $this->version, false);
 		
-		// if page=twilio-bulk-new-campaign, load tempusdominus js
+		// if page=twilio-bulk-new-campaign
 		if (isset($_GET['page']) && $_GET['page'] == 'twilio-bulk-new-campaign') {
-			// momentjs
 			wp_enqueue_script('moment-js', plugin_dir_url(__FILE__) . 'js/moment.js', array('jquery'), $this->version, false);
-			// popper.min.js
 			wp_enqueue_script('popper-js', plugin_dir_url(__FILE__) . 'js/popper.min.js', array('jquery'), $this->version, false);
-			// jquery-datetimepicker js
 			wp_enqueue_script('jquery-datetimepicker-js', plugin_dir_url(__FILE__) . 'js/jquery.datetimepicker.full.min.js', array('jquery'), $this->version, false);
-			
 		}
 		
-		// wp_localize_script to point to admin-ajax.php
+		// wp_localize_script to point to admin-ajax.php and create nonce: twilio_bulk_ajax.ajaxurl, twilio_bulk_ajax.nonce
 		wp_enqueue_script('twilio_bulk_ajax', plugin_dir_url(__FILE__) . 'js/twilio-bulk-admin.js', array('jquery'), $this->version, false);
 		wp_localize_script('twilio_bulk_ajax', 'twilio_bulk_ajax', array('ajaxurl' => admin_url('admin-ajax.php'), 'nonce' => wp_create_nonce('twilio_bulk_nonce')));
 	}
 
-	// Callback function for Loader class to create Main menu on Admin Dashboard
-	public function twilio_bulk_admin_menu()
-	{
-
-		// Dashboard Menu
-		add_menu_page('Twilio Bulk Text', 'Bulk Messaging', 'manage_options', 'twilio-bulk-dashboard', array($this, 'twilio_bulk_admin_page'), 'dashicons-format-chat', 26);
-
-		// Programmable Messages
-		add_submenu_page('twilio-bulk-dashboard', 'Programmable Messages', 'Programmable Messages', 'manage_options', 'twilio-bulk-programmable-messages', array($this, 'twilio_bulk_programmable_messages_page'));
-		add_submenu_page('twilio-bulk-dashboard', 'Create New Programmable Message', 'Create New Programmable Message', 'manage_options', 'twilio-bulk-programmable-messages-create', array($this, 'twilio_bulk_programmable_messages_create_page'));
-
-		// Contacts Menu
-		add_submenu_page('twilio-bulk-dashboard', 'Contacts', 'Contacts', 'manage_options', 'twilio-bulk-contacts', array($this, 'twilio_bulk_contacts_page'));
-
-		// Campaigns Menu
-		add_submenu_page('twilio-bulk-dashboard', 'Create New Campaign', 'Create New Campaign', 'manage_options', 'twilio-bulk-new-campaign', array($this, 'twilio_bulk_new_campaign_page'));
-		add_submenu_page('twilio-bulk-dashboard', 'Campaigns', 'View Campaigns', 'manage_options', 'twilio-bulk-campaigns', array($this, 'twilio_bulk_campaigns_page'));
-
-
-		// Reports Menu
-		add_submenu_page('twilio-bulk-dashboard', 'Reports', 'Reports', 'manage_options', 'twilio-bulk-reports', array($this, 'twilio_bulk_reports_page'));
-	}
-
+	
 	// Callback function for Loader to register settings
 	public function twilio_bulk_admin_settings()
 	{
 		register_setting('twilio_bulk_settings_group', 'twilio_account_sid');
 		register_setting('twilio_bulk_settings_group', 'twilio_account_auth_token');
-		register_setting('twilio_bulk_settings_group', 'twilio_account_phone_number');
+		register_setting('twilio_bulk_settings_group', 'twilio_account_sending_number');
+		register_setting('twilio_bulk_settings_group', 'twilio_account_sending_number_sid');
+		register_setting('twilio_bulk_settings_group', 'twilio_account_sending_number_smsMethod');
+		register_setting('twilio_bulk_settings_group', 'twilio_account_sending_number_smsUrl');
 		// Later on add more settings
 		// register_setting( 'twilio_bulk_settings_group', '' );
 		// register_setting( 'twilio_bulk_settings_group', '' );
@@ -219,14 +195,14 @@ class Twilio_Bulk_Admin
 		$output = ob_get_clean();
 		echo $output;
 	}
-
-
+	
+	
 	public function twilio_bulk_campaigns_page()
 	{
 		// include_once( plugin_dir_path( __FILE__ ) . 'partials/twilio-bulk-admin-campaigns.php' );
 		echo '<h1>Campaigns</h1>';
 	}
-
+	
 	public function twilio_bulk_new_campaign_page()
 	{
 		// buffer output
@@ -245,16 +221,16 @@ class Twilio_Bulk_Admin
 		echo $output;
 
 	}
-
+	
 	public function twilio_bulk_reports_page()
 	{
 		// include_once( plugin_dir_path( __FILE__ ) . 'partials/twilio-bulk-admin-reports.php' );
 		echo '<h1>Reports</h1>';
 	}
-
-
+	
+	
 	// All CRUD Functions for All Tables Defined Below
-
+	
 	// Begin CRUD functions for Programmable Messages
 	// Create Programmable Message
 	public function create_programmable_message()
@@ -266,7 +242,7 @@ class Twilio_Bulk_Admin
 		$message_name = $post_data['message_name'];
 		$message_description = $post_data['message_description'];
 		$message_uid = hash('md5', $message_body . $message_type . $message_name . $message_description);
-
+		
 		// INSERT message information into programmable messages database
 		global $wpdb;
 		$table_name = $wpdb->prefix . 'twilio_bulk_programmable_messages';
@@ -285,7 +261,7 @@ class Twilio_Bulk_Admin
 				'%s',
 				'%s',
 				'%s',
-			)
+				)
 		);
 	}
 
@@ -295,12 +271,12 @@ class Twilio_Bulk_Admin
 		// Get POST Data
 		$post_data = $_POST;
 		$message_uid = $post_data['message_uid'];
-
+		
 		// Get Programmable Message
 		global $wpdb;
 		$table_name = $wpdb->prefix . 'twilio_bulk_programmable_messages';
 		$message = $wpdb->get_row("SELECT * FROM $table_name WHERE message_uid = '$message_uid'");
-
+		
 		// Return Programmable Message
 		return json_encode($message);
 	}
@@ -341,7 +317,7 @@ class Twilio_Bulk_Admin
 		$message_type = $post_data['message_type'];
 		$message_name = $post_data['message_name'];
 		$message_description = $post_data['message_description'];
-
+		
 		// Update Programmable Message
 		global $wpdb;
 		$table_name = $wpdb->prefix . 'twilio_bulk_programmable_messages';
@@ -367,7 +343,7 @@ class Twilio_Bulk_Admin
 			)
 		);
 	}
-
+	
 	// Delete Programmable Message
 	public function delete_programmable_message($uid)
 	{
@@ -378,363 +354,6 @@ class Twilio_Bulk_Admin
 		$table_name = $wpdb->prefix . 'twilio_bulk_programmable_messages';
 		$deletion = $wpdb->delete($table_name, array('programmable_message_uid' => $uid));
 		return $deletion;
-	}
-
-	// Create Message to Contact
-	public function create_message()
-	{
-		// Get POST Data
-		$post_data = $_POST;
-		$message_uid = $post_data['message_uid'];
-		$contact_uid = $post_data['contact_uid'];
-		$message_status = $post_data['message_status'];
-		$message_date = $post_data['message_date'];
-		$message_direction = $post_data['message_direction'];
-		$message_body = $post_data['message_body'];
-		$message_from = $post_data['message_from'];
-		$message_to = $post_data['message_to'];
-		$message_media_url = $post_data['message_media_url'];
-		$message_media_type = $post_data['message_media_type'];
-		$message_media_size = $post_data['message_media_size'];
-		$message_media_format = $post_data['message_media_format'];
-		$conversation_uid = $post_data['conversation_uid'];
-
-		// Insert Message into Database
-		global $wpdb;
-		$table_name = $wpdb->prefix . 'twilio_bulk_messages';
-		$wpdb->insert(
-			$table_name,
-			array(
-				'message_uid' => $message_uid,
-				'contact_uid' => $contact_uid,
-				'message_status' => $message_status,
-				'message_date' => $message_date,
-				'message_direction' => $message_direction,
-				'message_body' => $message_body,
-				'message_from' => $message_from,
-				'message_to' => $message_to,
-				'message_media_url' => $message_media_url,
-				'message_media_type' => $message_media_type,
-				'message_media_size' => $message_media_size,
-				'message_media_format' => $message_media_format,
-				'conversation_uid' => $conversation_uid,
-			),
-			array(
-				'%s',
-				'%s',
-				'%s',
-				'%s',
-				'%s',
-				'%s',
-				'%s',
-				'%s',
-				'%s',
-				'%s',
-				'%s',
-				'%s',
-				'%s',
-			)
-		);
-
-		// If message is outgoing, send message
-		if ($message_direction == 'outgoing') {
-			// Send Message
-			$this->send_message($message_uid);
-		}
-
-		return json_encode($message_uid);
-	}
-
-	// Send Message if Outgoing
-	public function send_message($message_uid)
-	{
-		// Get Message
-		global $wpdb;
-		$table_name = $wpdb->prefix . 'twilio_bulk_messages';
-		$message = $wpdb->get_row("SELECT * FROM $table_name WHERE message_uid = '$message_uid'");
-
-		// Send Message if Type is SMS
-		if ($message->message_type == 'sms') {
-			// Send SMS
-			$this->send_sms($message);
-		}
-
-		// Send Message if Type is Email
-		if ($message->message_type == 'email') {
-			// Send Email
-			$this->send_email($message);
-		}
-
-		return json_encode($message_uid);
-	}
-
-	// Send SMS
-	public function send_sms($message)
-	{
-		// Get API Keys from Options
-		$account_sid = get_option('twilio_account_sid');
-		$auth_token = get_option('twilio_auth_token');
-
-		// Get Contact
-		global $wpdb;
-		$table_name = $wpdb->prefix . 'twilio_bulk_contacts';
-		$contact = $wpdb->get_row("SELECT * FROM $table_name WHERE contact_uid = '$message->contact_uid'");
-
-		// Create Conversation if it doesn't exist
-		if ($message->conversation_uid == '') {
-			// Create Conversation
-			$conversation_uid = $this->create_conversation($message->contact_uid);
-		} else {
-			// Get Conversation
-			$conversation_uid = $message->conversation_uid;
-		}
-
-		// Get Twilio Client
-		$client = new Client($account_sid, $auth_token);
-
-		// Send SMS
-		$client->account->messages->create(array(
-			'To' => $contact->contact_phone,
-			'From' => $message->message_from,
-			'Body' => $message->message_body,
-		));
-	}
-
-	// Send Email
-	public function send_email($message)
-	{
-		// Send wordpress email to contact
-		$to = $message->contact_email;
-		// $subject = $message->message_subject;
-		$subject = 'Testing WP_Mail functionality';
-		$message = $message->message_body;
-		$headers = array('Content-Type: text/html; charset=UTF-8');
-		wp_mail($to, $subject, $message, $headers);
-	}
-
-	// Get Message or Messages
-	public function get_message()
-	{
-		// Get POST Data
-		$post_data = $_POST;
-		$message_uid = $post_data['message_uid'];
-
-		// Get Message
-		global $wpdb;
-		$table_name = $wpdb->prefix . 'twilio_bulk_messages';
-		$message = $wpdb->get_row("SELECT * FROM $table_name WHERE message_uid = '$message_uid'");
-
-		// Return Message
-		return json_encode($message);
-	}
-
-	// Delete Message
-	public function delete_message()
-	{
-		// Get POST Data
-		$post_data = $_POST;
-		$message_uid = $post_data['message_uid'];
-
-		// Delete Message
-		global $wpdb;
-		$table_name = $wpdb->prefix . 'twilio_bulk_messages';
-		$wpdb->delete($table_name, array('message_uid' => $message_uid));
-
-		return json_encode($message_uid);
-	}
-
-	// CRUD Options for Conversations
-	// Create New Conversation
-	public function create_conversation($contact_uid)
-	{
-		// Get POST Data
-		$post_data = $_POST;
-		$conversation_uid = $post_data['conversation_uid'];
-		$conversation_name = $post_data['conversation_name'];
-		$conversation_status = $post_data['conversation_status'];
-		$conversation_participants = $post_data['conversation_participants'];
-		$conversation_inbound_message_count = $post_data['conversation_inbound_message_count'];
-		$conversation_outbound_message_count = $post_data['conversation_outbound_message_count'];
-		$conversation_last_message_date = $post_data['conversation_last_message_date'];
-		$conversation_last_message_from = $post_data['conversation_last_message_from'];
-		$campaign_uid = $post_data['campaign_uid'];
-
-		// Add Conversation to Database
-		global $wpdb;
-		$table_name = $wpdb->prefix . 'twilio_bulk_conversations';
-		$wpdb->insert(
-			$table_name,
-			array(
-				'conversation_uid' => $conversation_uid,
-				'conversation_name' => $conversation_name,
-				'conversation_status' => $conversation_status,
-				'conversation_participants' => $conversation_participants,
-				'conversation_inbound_message_count' => $conversation_inbound_message_count,
-				'conversation_outbound_message_count' => $conversation_outbound_message_count,
-				'conversation_last_message_date' => $conversation_last_message_date,
-				'conversation_last_message_from' => $conversation_last_message_from,
-				'campaign_uid' => $campaign_uid,
-			),
-			array(
-				'%s',
-				'%s',
-				'%s',
-				'%s',
-				'%s',
-				'%s',
-				'%s',
-				'%s',
-				'%s',
-				'%s',
-			)
-		);
-
-		return $conversation_uid;
-	}
-
-	// Get Conversation
-	public function get_conversation()
-	{
-		// Get POST Data
-		$post_data = $_POST;
-		$conversation_uid = $post_data['conversation_uid'];
-
-		// Get Conversation
-		global $wpdb;
-		$table_name = $wpdb->prefix . 'twilio_bulk_conversations';
-		$conversation = $wpdb->get_row("SELECT * FROM $table_name WHERE conversation_uid = '$conversation_uid'");
-
-		// Return Conversation
-		return json_encode($conversation);
-	}
-
-	// Update Conversation Participants and Status
-	public function update_conversation()
-	{
-		// Get POST Data
-		$post_data = $_POST;
-		$conversation_uid = $post_data['conversation_uid'];
-		$conversation_name = $post_data['conversation_name'];
-		$conversation_status = $post_data['conversation_status'];
-		$conversation_participants = $post_data['conversation_participants'];
-		$conversation_inbound_message_count = $post_data['conversation_inbound_message_count'];
-		$conversation_outbound_message_count = $post_data['conversation_outbound_message_count'];
-		$conversation_last_message_date = $post_data['conversation_last_message_date'];
-		$conversation_last_message_from = $post_data['conversation_last_message_from'];
-		$campaign_uid = $post_data['campaign_uid'];
-
-		// Update Conversation
-		global $wpdb;
-		$table_name = $wpdb->prefix . 'twilio_bulk_conversations';
-		$wpdb->update(
-			$table_name,
-			array(
-				'conversation_name' => $conversation_name,
-				'conversation_status' => $conversation_status,
-				'conversation_participants' => $conversation_participants,
-				'conversation_inbound_message_count' => $conversation_inbound_message_count,
-				'conversation_outbound_message_count' => $conversation_outbound_message_count,
-				'conversation_last_message_date' => $conversation_last_message_date,
-				'conversation_last_message_from' => $conversation_last_message_from,
-				'campaign_uid' => $campaign_uid,
-			),
-			array(
-				'conversation_uid' => $conversation_uid,
-			),
-			array(
-				'%s',
-				'%s',
-				'%s',
-				'%s',
-				'%s',
-				'%s',
-				'%s',
-				'%s',
-			),
-			array(
-				'%s',
-			)
-		);
-
-		return $conversation_uid;
-	}
-
-	// Delete Conversation
-	public function delete_conversation()
-	{
-		// Get POST Data
-		$post_data = $_POST;
-		$conversation_uid = $post_data['conversation_uid'];
-
-		// Delete Conversation
-		global $wpdb;
-		$table_name = $wpdb->prefix . 'twilio_bulk_conversations';
-		$wpdb->delete($table_name, array('conversation_uid' => $conversation_uid), array('%s'));
-
-		return $conversation_uid;
-	}
-
-	// Campaign CRUD
-	// Create New Campaign from File Read by PHPSpreadsheet
-	public function create_campaign_from_file()
-	{
-		// Get POST Data
-		$post_data = $_POST;
-		$campaign_uid = $post_data['campaign_uid'];
-		$campaign_name = $post_data['campaign_name'];
-		$campaign_description = $post_data['campaign_description'];
-		$campaign_status = $post_data['campaign_status'];
-		$campaign_type = $post_data['campaign_type'];
-		$campaign_programmable_message_id = $post_data['campaign_programmable_message_id'];
-		$campaign_is_active = $post_data['campaign_is_active'];
-		$campaign_is_archived = $post_data['campaign_is_archived'];
-		$campaign_has_follow_up = $post_data['campaign_has_follow_up'];
-		$campaign_follow_up_message_id = $post_data['campaign_follow_up_message_id'];
-		$campaign_follow_up_message_date = $post_data['campaign_follow_up_message_date'];
-		$campaign_has_second_follow_up = $post_data['campaign_has_second_follow_up'];
-		$campaign_second_follow_up_message_id = $post_data['campaign_second_follow_up_message_id'];
-		$campaign_second_follow_up_message_date = $post_data['campaign_second_follow_up_message_date'];
-
-		// Create Campaign
-		global $wpdb;
-		$table_name = $wpdb->prefix . 'twilio_bulk_campaigns';
-		$wpdb->insert(
-			$table_name,
-			array(
-				'campaign_uid' => $campaign_uid,
-				'campaign_name' => $campaign_name,
-				'campaign_description' => $campaign_description,
-				'campaign_status' => $campaign_status,
-				'campaign_type' => $campaign_type,
-				'campaign_programmable_message_id' => $campaign_programmable_message_id,
-				'campaign_is_active' => $campaign_is_active,
-				'campaign_is_archived' => $campaign_is_archived,
-				'campaign_has_follow_up' => $campaign_has_follow_up,
-				'campaign_follow_up_message_id' => $campaign_follow_up_message_id,
-				'campaign_follow_up_message_date' => $campaign_follow_up_message_date,
-				'campaign_has_second_follow_up' => $campaign_has_second_follow_up,
-				'campaign_second_follow_up_message_id' => $campaign_second_follow_up_message_id,
-				'campaign_second_follow_up_message_date' => $campaign_second_follow_up_message_date,
-			),
-			array(
-				'%s',
-				'%s',
-				'%s',
-				'%s',
-				'%s',
-				'%s',
-				'%s',
-				'%s',
-				'%s',
-				'%s',
-				'%s',
-				'%s',
-				'%s',
-				'%s',
-			)
-		);
-
-		return $campaign_uid;
 	}
 
 	// Move this function to its include file: /twilio-bulk/includes/class-twilio-bulk-ajax-handler.php
@@ -752,15 +371,15 @@ class Twilio_Bulk_Admin
 		// $fileData = (isset($_FILES)) ? $_FILES : '';
 
 		$ajax = new TwilioBulkAjax( $formData, $action, $method, null, null, $nonce );
-
+		
 			switch ($method) {
 				case 'spreadsheet_initial_upload':
 					// Handle upload before sending to AJAX class
 					if (0 < $_FILES['file']['error']) {
 						$response['error'] = 'Error: ' . $_FILES['file']['error'];
 					} else { 
-					// No errors, proceed with upload, move file with wordpress
-					$spreadsheet_file = wp_upload_bits($_FILES['file']['name'], null, file_get_contents($_FILES['file']['tmp_name']));
+						// No errors, proceed with upload, move file with wordpress
+						$spreadsheet_file = wp_upload_bits($_FILES['file']['name'], null, file_get_contents($_FILES['file']['tmp_name']));
 					}
 					// Get path to uploaded file
 					$path = $spreadsheet_file['file'];
@@ -771,13 +390,124 @@ class Twilio_Bulk_Admin
 				case 'campaign_submit':
 					$ajax->campaign_submit();
 					break;
-				case 'get_programmable_messages':
+					case 'get_programmable_messages':
 					$ajax->get_programmable_messages(0, true);
 					break;
 				default:
-					wp_send_json(array('error' => 'Method not found', 'POST' => $formData));
+				wp_send_json(array('error' => 'Method not found', 'POST' => $formData));
 					wp_die();
 			}
 	}
 		/* This has been moved to the Handler class in includes/class-twilio-bulk-ajax-handler.php */
-}
+		#region ADMIN MENU
+		// Callback function for Loader class to create Main menu on Admin Dashboard
+		public function twilio_bulk_admin_menu()
+		{
+			// Exit if user cannot manage options
+			if (!current_user_can('manage_options')) {
+				return;
+			}
+	
+			// Dashboard Menu
+			add_menu_page('Twilio Bulk Text', 'Bulk Messaging', 'manage_options', 'twilio-bulk-dashboard', array($this, 'twilio_bulk_admin_page'), 'dashicons-format-chat', 26);
+	
+			// Programmable Messages
+			add_submenu_page('twilio-bulk-dashboard', 'Programmable Messages', 'Programmable Messages', 'manage_options', 'twilio-bulk-programmable-messages', array($this, 'twilio_bulk_programmable_messages_page'));
+			add_submenu_page('twilio-bulk-dashboard', 'Create New Programmable Message', 'Create New Programmable Message', 'manage_options', 'twilio-bulk-programmable-messages-create', array($this, 'twilio_bulk_programmable_messages_create_page'));
+	
+			// Contacts Menu
+			add_submenu_page('twilio-bulk-dashboard', 'Contacts', 'Contacts', 'manage_options', 'twilio-bulk-contacts', array($this, 'twilio_bulk_contacts_page'));
+	
+			// Campaigns Menu
+			add_submenu_page('twilio-bulk-dashboard', 'Create New Campaign', 'Create New Campaign', 'manage_options', 'twilio-bulk-new-campaign', array($this, 'twilio_bulk_new_campaign_page'));
+			add_submenu_page('twilio-bulk-dashboard', 'Campaigns', 'View Campaigns', 'manage_options', 'twilio-bulk-campaigns', array($this, 'twilio_bulk_campaigns_page'));
+	
+	
+			// Reports Menu
+			add_submenu_page('twilio-bulk-dashboard', 'Reports', 'Reports', 'manage_options', 'twilio-bulk-reports', array($this, 'twilio_bulk_reports_page'));
+		}
+	
+		// Callback function for Loader class to create menu in Admin Bar
+		public function twilio_bulk_admin_bar_menu( WP_Admin_Bar $wp_admin_bar ) {
+		
+			// Exit if user cannot manage options
+			if (!current_user_can('manage_options')) {
+				return;
+			}
+	
+			$main_node = array(
+				'id' => 'twilio-bulk-dashboard',
+				'title' => '<span class="ab-icon dashicons dashicons-format-chat"></span> Bulk Messaging',
+				'href' => admin_url('admin.php?page=twilio-bulk-dashboard'),
+				'meta' => array(
+					'title' => __('Twilio Bulk Text'),
+				),
+			);
+			$submenu = array(
+				array(
+					'parent' => 'twilio-bulk-dashboard',
+					'id' => 'twilio-bulk-programmable-messages',
+					'title' => 'Programmable Messages',
+					'href' => admin_url('admin.php?page=twilio-bulk-programmable-messages'),
+					'meta' => array(
+						'title' => __('Programmable Messages'),
+					),
+				),
+				array(
+					'parent' => 'twilio-bulk-programmable-messages',
+					'id' => 'twilio-bulk-programmable-messages-create',
+					'title' => 'Create New Programmable Message',
+					'href' => admin_url('admin.php?page=twilio-bulk-programmable-messages-create'),
+					'meta' => array(
+						'title' => __('Create New Programmable Message'),
+					),
+				),
+				array(
+					'parent' => 'twilio-bulk-dashboard',
+					'id' => 'twilio-bulk-contacts',
+					'title' => 'Contacts',
+					'href' => admin_url('admin.php?page=twilio-bulk-contacts'),
+					'meta' => array(
+						'title' => __('Contacts'),
+					),
+				),
+				array(
+					'parent' => 'twilio-bulk-contacts',
+					'id' => 'twilio-bulk-contacts-create',
+					'title' => 'Upload Contact List',
+					'href' => admin_url('admin.php?page=twilio-bulk-contacts-create'),
+					'meta' => array(
+						'title' => __('Upload Contact List'),
+					),
+				),
+				array(
+					'parent' => 'twilio-bulk-dashboard',
+					'id' => 'twilio-bulk-campaigns',
+					'title' => 'Campaigns',
+					'href' => admin_url('admin.php?page=twilio-bulk-campaigns'),
+					'meta' => array(
+						'title' => __('Campaigns'),
+					),
+				),
+				array(
+					'parent' => 'twilio-bulk-dashboard',
+					'id' => 'twilio-bulk-reports',
+					'title' => 'Reports',
+					'href' => admin_url('admin.php?page=twilio-bulk-reports'),
+					'meta' => array(
+						'title' => __('Reports'),
+					),
+				),
+			);
+	
+			
+			$wp_admin_bar->add_menu( $main_node );
+			foreach ($submenu as $submenu_item) {
+				$wp_admin_bar->add_menu( $submenu_item );
+			}
+	
+	
+		}
+		#endregion
+	
+	}

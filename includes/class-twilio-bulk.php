@@ -137,8 +137,7 @@ class Twilio_Bulk
 	}
 
 	/**
-	 * Register all of the hooks related to the admin area functionality
-	 * of the plugin.
+	 * Callback functions for add_action and add_filter are located in the ../admin/class-twilio-bulk-admin.php
 	 *
 	 * @since    0.1.0
 	 * @access   private
@@ -147,19 +146,22 @@ class Twilio_Bulk
 	{
 
 		$plugin_admin = new Twilio_Bulk_Admin($this->get_plugin_name(), $this->get_version());
+		// AJAX hook
+		$this->loader->add_action( 'wp_ajax_twilio_bulk', $plugin_admin, 'twilio_bulk_ajax_methods' );
+		// Add admin menu and settings
+		$this->loader->add_action('admin_menu', $plugin_admin, 'twilio_bulk_admin_menu');
+		// Add Menu to admin bar
+		$this->loader->add_action('admin_bar_menu', $plugin_admin, 'twilio_bulk_admin_bar_menu', 100);
+		// Register Wordpress Options to be stored in the database
+		$this->loader->add_action('admin_init', $plugin_admin, 'twilio_bulk_admin_settings');
 
 		$this->loader->add_action('admin_enqueue_scripts', $plugin_admin, 'enqueue_styles');
 		$this->loader->add_action('admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts');
 
-		// Add admin menu and settings
-		$this->loader->add_action('admin_menu', $plugin_admin, 'twilio_bulk_admin_menu');
-		$this->loader->add_action('admin_init', $plugin_admin, 'twilio_bulk_admin_settings');
 
 		// Include AJAX methods and add_action
 		// require_once plugin_dir_path(  __FILE__ ) . 'admin/class-twilio-bulk-ajax-methods.php';
 
-		// add_action AJAX hook
-		$this->loader->add_action( 'wp_ajax_twilio_bulk', $plugin_admin, 'twilio_bulk_ajax_methods' );
 
 	}
 
@@ -174,19 +176,6 @@ class Twilio_Bulk
 	{
 
 		$plugin_public = new Twilio_Bulk_Public($this->get_plugin_name(), $this->get_version());
-
-		// Check path
-		// global $wp;
-		// $current_path = $wp->request;
-		// $pathh = $wp->query_vars;
-		// // $current_path = explode('/', $current_path);
-		// var_dump ( $current_path );
-		// echo '<br>';
-		// var_dump( $pathh );
-		// echo add_query_arg( $wp->query_vars, home_url( $wp->request ) );
-		// die;
-
-		// echo __ROOT__;
 
 		if (isset($_GET['twilio-bulk'])) { // Add CSS and JS when twilio-bulk is a parameter in the URL
 			$this->loader->add_action('wp_enqueue_scripts', $plugin_public, 'enqueue_styles');
