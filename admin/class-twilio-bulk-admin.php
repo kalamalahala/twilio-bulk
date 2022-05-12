@@ -24,6 +24,7 @@
 // Include Composer Autoloader
 require ( plugin_dir_path( __FILE__ ) ) . '../vendor/autoload.php';
 require ( plugin_dir_path( __FILE__ ) ) . 'classes/phpspreadsheet-handler.php';
+require ( plugin_dir_path( __FILE__ ) ) . 'classes/twilio-bulk-contacts.php';
 require ( plugin_dir_path( __FILE__ ) ) . '../includes/class-twilio-bulk-ajax-handler.php';
 
 use Twilio\Rest\Client;
@@ -126,7 +127,6 @@ class Twilio_Bulk_Admin
 		 */
 
 		//bootstrap js
-		wp_enqueue_script('bootstrap-js', plugin_dir_url(__FILE__) . 'js/bootstrap.js', array('jquery'), $this->version, false);
 		wp_enqueue_script('jquery-ui-js', plugin_dir_url(__FILE__) . 'js/jquery-ui.js', array('jquery'), $this->version, false);
 		
 		// if page=twilio-bulk-new-campaign
@@ -135,6 +135,12 @@ class Twilio_Bulk_Admin
 			wp_enqueue_script('popper-js', plugin_dir_url(__FILE__) . 'js/popper.min.js', array('jquery'), $this->version, false);
 			wp_enqueue_script('jquery-datetimepicker-js', plugin_dir_url(__FILE__) . 'js/jquery.datetimepicker.full.min.js', array('jquery'), $this->version, false);
 		}
+
+		if (isset($_GET['page']) && $_GET['page'] == 'twilio-bulk-contacts-create') {
+			wp_enqueue_script('twilio-bulk-contacts-create-js', plugin_dir_url(__FILE__) . 'js/twilio-bulk-contacts-jquery.js', array('jquery'), $this->version, false);
+		}
+
+		wp_enqueue_script('bootstrap-js', plugin_dir_url(__FILE__) . 'js/bootstrap.js', array('jquery'), $this->version, false);
 		
 		// wp_localize_script to point to admin-ajax.php and create nonce: twilio_bulk_ajax.ajaxurl, twilio_bulk_ajax.nonce
 		wp_enqueue_script('twilio_bulk_ajax', plugin_dir_url(__FILE__) . 'js/twilio-bulk-admin.js', array('jquery'), $this->version, false);
@@ -142,7 +148,7 @@ class Twilio_Bulk_Admin
 	}
 
 	
-	// Callback function for Loader to register settings
+	// Callback function for Loader to register Wordpress Options
 	public function twilio_bulk_admin_settings()
 	{
 		register_setting('twilio_bulk_settings_group', 'twilio_account_sid');
@@ -151,9 +157,6 @@ class Twilio_Bulk_Admin
 		register_setting('twilio_bulk_settings_group', 'twilio_account_sending_number_sid');
 		register_setting('twilio_bulk_settings_group', 'twilio_account_sending_number_smsMethod');
 		register_setting('twilio_bulk_settings_group', 'twilio_account_sending_number_smsUrl');
-		// Later on add more settings
-		// register_setting( 'twilio_bulk_settings_group', '' );
-		// register_setting( 'twilio_bulk_settings_group', '' );
 	}
 
 	// Callback function for twilio_bulk_admin_menu
@@ -196,6 +199,33 @@ class Twilio_Bulk_Admin
 		echo $output;
 	}
 	
+	public function twilio_bulk_contacts_page()
+	{
+		// buffer output
+		ob_start();
+		include_once(plugin_dir_path(__FILE__) . 'partials/contacts/contacts-read.php');
+		$output = ob_get_clean();
+		echo $output;
+
+	}
+
+	public function twilio_bulk_contacts_create_page()
+	{
+		// buffer output
+		ob_start();
+		include_once(plugin_dir_path(__FILE__) . 'partials/contacts/contacts-create.php');
+		$output = ob_get_clean();
+		echo $output;
+	}
+
+	public function twilio_bulk_contacts_update_page()
+	{
+		// buffer output
+		ob_start();
+		include_once(plugin_dir_path(__FILE__) . 'partials/contacts/contacts-update.php');
+		$output = ob_get_clean();
+		echo $output;
+	}
 	
 	public function twilio_bulk_campaigns_page()
 	{
@@ -212,15 +242,6 @@ class Twilio_Bulk_Admin
 		echo $output;
 	}
 
-	public function twilio_bulk_contacts_page()
-	{
-		// buffer output
-		ob_start();
-		include_once(plugin_dir_path(__FILE__) . 'partials/contacts/contacts-read.php');
-		$output = ob_get_clean();
-		echo $output;
-
-	}
 	
 	public function twilio_bulk_reports_page()
 	{
@@ -417,6 +438,7 @@ class Twilio_Bulk_Admin
 	
 			// Contacts Menu
 			add_submenu_page('twilio-bulk-dashboard', 'Contacts', 'Contacts', 'manage_options', 'twilio-bulk-contacts', array($this, 'twilio_bulk_contacts_page'));
+			add_submenu_page('twilio-bulk-dashboard', 'Upload New Contacts', 'Upload New Contacts', 'manage_options', 'twilio-bulk-contacts-create', array($this, 'twilio_bulk_contacts_create_page'));
 	
 			// Campaigns Menu
 			add_submenu_page('twilio-bulk-dashboard', 'Create New Campaign', 'Create New Campaign', 'manage_options', 'twilio-bulk-new-campaign', array($this, 'twilio_bulk_new_campaign_page'));

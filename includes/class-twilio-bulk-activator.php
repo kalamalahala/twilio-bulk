@@ -36,7 +36,7 @@ class Twilio_Bulk_Activator
 			"CREATE TABLE $messages (
 				id mediumint(9) NOT NULL AUTO_INCREMENT PRIMARY KEY,
 				message_uid VARCHAR(255) NOT NULL,
-				message_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+				message_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 				message_from VARCHAR(255) NOT NULL,
 				message_to VARCHAR(255) NOT NULL,
 				message_body VARCHAR(255) NOT NULL,
@@ -53,12 +53,12 @@ class Twilio_Bulk_Activator
 			"CREATE TABLE $conversations (
 				id mediumint(9) NOT NULL AUTO_INCREMENT PRIMARY KEY,
 				conversation_uid VARCHAR(255) NOT NULL,
-				conversation_date_created DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+				conversation_date_created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 				conversation_participants VARCHAR(255) NOT NULL,
 				conversation_status VARCHAR(255) NOT NULL,
 				conversation_inbound_message_count VARCHAR(255) NOT NULL,
 				conversation_outbound_message_count VARCHAR(255) NOT NULL,
-				conversation_last_message_date DATETIME NOT NULL,
+				conversation_last_message_date TIMESTAMP NOT NULL,
 				conversation_last_message_from VARCHAR(255) NOT NULL,
 				campaign_uid VARCHAR(255) NOT NULL
 			) $charset_collate;",
@@ -74,20 +74,20 @@ class Twilio_Bulk_Activator
 				campaign_is_archived BOOLEAN NOT NULL DEFAULT 0,
 				campaign_has_follow_up BOOLEAN NOT NULL DEFAULT 0,
 				campaign_follow_up_message_id INT(9) NOT NULL,
-				campaign_follow_up_message_date DATETIME NOT NULL,
+				campaign_follow_up_message_date TIMESTAMP NOT NULL,
 				campaign_has_second_follow_up BOOLEAN NOT NULL DEFAULT 0,
 				campaign_second_follow_up_message_id INT(9) NOT NULL,
-				campaign_second_follow_up_message_date DATETIME NOT NULL,			
-				campaign_date_created DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-				campaign_date_updated DATETIME,
-				campaign_date_deleted DATETIME,
-				campaign_date_scheduled DATETIME,
-				campaign_date_started DATETIME,
-				campaign_date_completed DATETIME,
-				campaign_date_canceled DATETIME,
-				campaign_date_paused DATETIME,
-				campaign_date_resumed DATETIME,
-				campaign_date_queued DATETIME
+				campaign_second_follow_up_message_date TIMESTAMP NOT NULL,			
+				campaign_date_created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+				campaign_date_updated TIMESTAMP,
+				campaign_date_deleted TIMESTAMP,
+				campaign_date_scheduled TIMESTAMP,
+				campaign_date_started TIMESTAMP,
+				campaign_date_completed TIMESTAMP,
+				campaign_date_canceled TIMESTAMP,
+				campaign_date_paused TIMESTAMP,
+				campaign_date_resumed TIMESTAMP,
+				campaign_date_queued TIMESTAMP
 			) $charset_collate;",
 
 			"CREATE TABLE $contacts (
@@ -98,11 +98,11 @@ class Twilio_Bulk_Activator
 				contact_email VARCHAR(255),
 				contact_status VARCHAR(255),
 				contact_disposition VARCHAR(255),
-				contact_date_created DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-				contact_date_updated DATETIME,
-				contact_date_deleted DATETIME,
-				contact_date_last_message_sent DATETIME,
-				contact_date_last_message_received DATETIME
+				contact_date_created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+				contact_date_updated TIMESTAMP,
+				contact_date_deleted TIMESTAMP,
+				contact_date_last_message_sent TIMESTAMP,
+				contact_date_last_message_received TIMESTAMP
 			) $charset_collate;",
 
 			"CREATE TABLE $uploads (
@@ -111,9 +111,9 @@ class Twilio_Bulk_Activator
 				upload_name VARCHAR(255) NOT NULL,
 				upload_type VARCHAR(255) NOT NULL,
 				upload_url VARCHAR(255) NOT NULL,
-				upload_date_created DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-				upload_date_updated DATETIME,
-				upload_date_deleted DATETIME
+				upload_date_created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+				upload_date_updated TIMESTAMP,
+				upload_date_deleted TIMESTAMP
 			) $charset_collate;",
 
 			"CREATE TABLE $programmable_messages (
@@ -122,9 +122,9 @@ class Twilio_Bulk_Activator
 				programmable_message_name VARCHAR(255) NOT NULL,
 				programmable_message_description VARCHAR(255) NOT NULL DEFAULT '',
 				programmable_message_content VARCHAR(255) NOT NULL DEFAULT '',
-				programmable_message_date_created DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-				programmable_message_date_updated DATETIME,
-				programmable_message_date_last_message_sent DATETIME NOT NULL
+				programmable_message_date_created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+				programmable_message_date_updated TIMESTAMP,
+				programmable_message_date_last_message_sent TIMESTAMP NOT NULL
 			) $charset_collate;",
 
 		);
